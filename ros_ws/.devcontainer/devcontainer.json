@@ -32,7 +32,6 @@
       "--pid=host",
       "--ipc=host",
       "--runtime=nvidia",
-      "--gpus=all",
       "-e", "DISPLAY=${env:DISPLAY}"
   ],
   "mounts": [
