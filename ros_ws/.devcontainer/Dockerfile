@@ -16,8 +16,10 @@ RUN groupadd --gid $USER_GID $USERNAME \
     && echo $USERNAME ALL=\(root\) NOPASSWD:ALL > /etc/sudoers.d/$USERNAME \
     && chmod 0440 /etc/sudoers.d/$USERNAME
 RUN apt-get update && apt-get upgrade -y
-RUN apt-get install -y python3-pip python3-rosdep python3-colcon-common-extensions python3-vcstool git
+RUN apt-get install -y python3-pip python3-rosdep python3-colcon-common-extensions python3-vcstool git ros-$ROS_DISTRO-teleop-twist-keyboard
 ENV SHELL /bin/bash
+
+RUN rosdep init && rosdep update
 
 # Automatically source ROS setup script for the user
 RUN echo "source /opt/ros/$ROS_DISTRO/setup.bash" >> /home/$USERNAME/.bashrc

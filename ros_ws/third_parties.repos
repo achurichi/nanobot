@@ -2,4 +2,4 @@ repositories:
   ThirdParty/dynamixel_sdk:
     type: git
     url: https://github.com/ROBOTIS-GIT/DynamixelSDK.git
-    version: humble
+    version: humble-devel

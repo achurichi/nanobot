@@ -38,5 +38,5 @@
   "mounts": [
      "source=/tmp/.X11-unix,target=/tmp/.X11-unix,type=bind,consistency=cached"
   ],
-  "postCreateCommand": "sudo rosdep init && sudo rosdep update && sudo rosdep install --from-paths src --ignore-src -y && sudo chown -R $(whoami) /home/ros_ws/"
+  "postCreateCommand": "sudo rosdep install --from-paths src --ignore-src -y && sudo chown -R $(whoami) /home/ros_ws/"
 }
