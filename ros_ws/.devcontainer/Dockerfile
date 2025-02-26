@@ -20,7 +20,9 @@ RUN apt-get install -y python3-pip
 ENV SHELL /bin/bash
 
 # Install additional ROS packages
-RUN apt-get install -y ros-$ROS_DISTRO-teleop-twist-keyboard
+RUN apt-get install -y \
+    ros-$ROS_DISTRO-teleop-twist-keyboard \
+    ros-$ROS_DISTRO-xacro
 
 # Automatically source ROS setup script for the user
 RUN echo "source /opt/ros/$ROS_DISTRO/setup.bash" >> /home/$USERNAME/.bashrc

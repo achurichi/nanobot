@@ -1,0 +1,216 @@
+<?xml version="1.0"?>
+
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="opibot">
+
+  <xacro:include filename="inertial_macros.xacro" />
+
+  <!-- Body dimensions -->
+  <xacro:property name="body_x_dim" value="0.14" />
+  <xacro:property name="body_y_dim" value="0.14" />
+  <xacro:property name="body_z_dim" value="0.071" />
+
+  <!-- Wheel dimensions -->
+  <xacro:property name="wheel_radius" value="0.03375" /> <!-- 67.5mm diameter -->
+  <xacro:property name="wheel_length" value="0.025" />
+  <xacro:property name="wheel_separation_from_body" value="0.0195" />
+  <xacro:property name="caster_wheel_radius" value="${wheel_radius/2}" />
+
+  <!-- Robot body and wheel mass -->
+  <xacro:property name="body_mass" value="0.906" />
+  <xacro:property name="wheel_mass" value="0.028" />
+  <xacro:property name="caster_wheel_mass" value="0.008" />
+
+  <!-- Moments of intertia of the wheel -->
+  <xacro:macro name="inertia_wheel">
+    <xacro:inertial_cylinder mass="${wheel_mass}" length="${wheel_length}"
+      radius="${wheel_radius}">
+      <origin xyz="0 0 0" rpy="0 0 0" />
+    </xacro:inertial_cylinder>
+  </xacro:macro>
+
+  <!-- Moments of intertia of the caster wheel -->
+  <xacro:macro name="inertia_caster_wheel">
+    <xacro:inertial_sphere mass="${caster_wheel_mass}" radius="${caster_wheel_radius}">
+      <origin xyz="0 0 0" rpy="0 0 0" />
+    </xacro:inertial_sphere>
+  </xacro:macro>
+
+  <!-- Materials -->
+
+  <material name="white">
+    <color rgba="1 1 1 1" />
+  </material>
+
+  <material name="black">
+    <color rgba="0 0 0 1" />
+  </material>
+
+  <!-- Links and joints definition -->
+
+  <!-- Base link -->
+
+  <link name="base_link"></link>
+
+  <!-- Body -->
+
+  <joint name="body_joint" type="fixed">
+    <parent link="base_link" />
+    <child link="body_link" />
+    <origin xyz="-${body_x_dim/2} 0 0"/>
+  </joint>
+
+  <link name="body_link">
+    <visual>
+      <origin xyz="${body_x_dim/2} 0 ${body_z_dim/2}" rpy="0 0 0" />
+      <geometry>
+        <box size="${body_x_dim} ${body_y_dim} ${body_z_dim}" />
+      </geometry>
+      <material name="white" />
+    </visual>
+    <collision>
+      <origin xyz="${body_x_dim/2} 0 ${body_z_dim/2}" rpy="0 0 0" />
+      <geometry>
+        <box size="${body_x_dim} ${body_y_dim} ${body_z_dim}" />
+      </geometry>
+    </collision>
+    <xacro:inertial_box mass="${body_mass}" x="${body_x_dim}" y="${body_y_dim}"
+      z="${body_z_dim}">
+      <origin xyz="${body_x_dim/2} 0 ${body_z_dim/2}" rpy="0 0 0" />
+    </xacro:inertial_box>
+  </link>
+
+  <gazebo reference="body_link">
+    <material>Gazebo/White</material>
+  </gazebo>
+
+  <!-- Left wheel -->
+
+  <joint name="left_wheel_joint" type="continuous">
+    <parent link="base_link" />
+    <child link="left_wheel_link" />
+    <origin
+      xyz="0 ${body_y_dim/2 + wheel_length/2 + wheel_separation_from_body} 0"
+      rpy="-${pi/2} 0 0" />
+    <axis xyz="0 0 1" />
+    <limit effort="100" velocity="100" />
+    <!-- <dynamics damping="1.0" friction="1.0" /> -->
+  </joint>
+
+  <link name="left_wheel_link">
+    <visual>
+      <geometry>
+        <cylinder length="${wheel_length}" radius="${wheel_radius}" />
+      </geometry>
+      <material name="black" />
+    </visual>
+    <collision>
+      <geometry>
+        <sphere radius="${wheel_radius}" />
+      </geometry>
+    </collision>
+    <xacro:inertia_wheel />
+  </link>
+
+  <gazebo reference="left_wheel_link">
+    <material>Gazebo/Black</material>
+    <!-- <mu1 value="0.2" />
+    <mu2 value="0.2" /> -->
+  </gazebo>
+
+  <!-- Right wheel -->
+
+  <joint name="right_wheel_joint" type="continuous">
+    <parent link="base_link" />
+    <child link="right_wheel_link" />
+    <origin
+      xyz="0 -${body_y_dim/2 + wheel_length/2 + wheel_separation_from_body} 0"
+      rpy="${pi/2} 0 0" />
+    <axis xyz="0 0 -1" />
+    <limit effort="100" velocity="100" />
+    <!-- <dynamics damping="1.0" friction="1.0" /> -->
+  </joint>
+
+  <link name="right_wheel_link">
+    <visual>
+      <geometry>
+        <cylinder length="${wheel_length}" radius="${wheel_radius}" />
+      </geometry>
+      <material name="black" />
+    </visual>
+    <collision>
+      <geometry>
+        <sphere radius="${wheel_radius}" />
+      </geometry>
+    </collision>
+    <xacro:inertia_wheel />
+  </link>
+
+  <gazebo reference="right_wheel_link">
+    <material>Gazebo/Black</material>
+    <!-- <mu1 value="0.2" />
+    <mu2 value="0.2" /> -->
+  </gazebo>
+
+  <!-- Back caster wheel -->
+
+  <joint name="back_caster_wheel_joint" type="fixed">
+      <parent link="body_link"/>
+      <child link="back_caster_wheel_link"/>
+      <origin 
+        xyz="${caster_wheel_radius} 0 -${caster_wheel_radius}" 
+        rpy="0 0 0"/>
+  </joint>
+
+  <link name="back_caster_wheel_link">
+    <visual>
+      <geometry>
+        <sphere radius="${caster_wheel_radius}" />
+      </geometry>
+      <material name="black"/>
+    </visual>
+    <collision>
+      <geometry>
+        <sphere radius="${caster_wheel_radius}" />
+      </geometry>
+    </collision>
+    <xacro:inertia_caster_wheel />
+  </link>
+
+  <gazebo reference="back_caster_wheel_link">
+    <material>Gazebo/Black</material>
+    <mu1 value="0.001"/>
+    <mu2 value="0.001"/>
+  </gazebo>
+
+  <!-- Front caster wheel -->
+
+  <joint name="front_caster_wheel_joint" type="fixed">
+      <parent link="body_link"/>
+      <child link="front_caster_wheel_link"/>
+      <origin 
+        xyz="${body_x_dim - caster_wheel_radius} 0 -${caster_wheel_radius}" 
+        rpy="0 0 0"/>
+  </joint>
+
+  <link name="front_caster_wheel_link">
+    <visual>
+      <geometry>
+        <sphere radius="${caster_wheel_radius}" />
+      </geometry>
+      <material name="black"/>
+    </visual>
+    <collision>
+      <geometry>
+        <sphere radius="${caster_wheel_radius}" />
+      </geometry>
+    </collision>
+    <xacro:inertia_caster_wheel />
+  </link>
+
+  <gazebo reference="front_caster_wheel_link">
+    <material>Gazebo/Black</material>
+    <mu1 value="0.001"/>
+    <mu2 value="0.001"/>
+  </gazebo>
+
+</robot>
