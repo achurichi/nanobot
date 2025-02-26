@@ -1,11 +1,9 @@
 {
-	"name": "ROS 2 Development Container",
+	"name": "ROS 2 Jetson Nano Development Container",
 	"privileged": true,
 	"remoteUser": "nano",
 	"build": {
-		"dockerfile": "Dockerfile",
-		// "target": "base",
-		"target": "local",
+		"dockerfile": "Dockerfile.nano",
 		"args": {
 			"USERNAME": "nano"
 		}
@@ -31,14 +29,13 @@
 		"--net=host",
 		"--pid=host",
 		"--ipc=host",
-		// "--runtime=nvidia",
+		"--runtime=nvidia",
 		"--gpus", "all",
     "-e", "NVIDIA_DRIVER_CAPABILITIES=all",
 		"-e", "DISPLAY=${env:DISPLAY}"
 	],
 	"mounts": [
-		"source=/tmp/.X11-unix,target=/tmp/.X11-unix,type=bind,consistency=cached",
-		"source=/dev/dri,target=/dev/dri,type=bind,consistency=cached"
+		"source=/tmp/.X11-unix,target=/tmp/.X11-unix,type=bind,consistency=cached"
 	],
 	"postCreateCommand": "sudo rosdep update && sudo rosdep install --from-paths src --ignore-src -y && sudo chown -R $(whoami) /home/ros_ws/"
 }

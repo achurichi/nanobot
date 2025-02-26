@@ -46,12 +46,12 @@ CMD ["/bin/bash"]
 # Local Build Stage: Used for local development with simulation and graphical tools.
 # -----------------------------------------------------------------------------------------
 
-FROM base AS local
+# FROM base AS local
 
-RUN sudo apt-get install -y \
-    ros-$ROS_DISTRO-joint-state-publisher-gui \
-    ros-$ROS_DISTRO-rviz2 \
-    # ros-$ROS_DISTRO-ros-gz \
-    ros-$ROS_DISTRO-gazebo-ros \
-    ros-$ROS_DISTRO-gazebo-plugins \
-    ros-$ROS_DISTRO-gazebo-ros2-control
+# RUN sudo apt-get install -y \
+#     ros-$ROS_DISTRO-joint-state-publisher-gui \
+#     ros-$ROS_DISTRO-rviz2 \
+#     # ros-$ROS_DISTRO-ros-gz \
+#     ros-$ROS_DISTRO-gazebo-ros \
+#     ros-$ROS_DISTRO-gazebo-plugins \
+#     ros-$ROS_DISTRO-gazebo-ros2-control
