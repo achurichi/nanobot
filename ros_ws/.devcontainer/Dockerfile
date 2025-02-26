@@ -1,4 +1,9 @@
-FROM ros:humble-ros-base
+# -----------------------------------------------------------------------------------------
+# Base Build Stage: Sets up the environment for the robot (without graphical tools).
+# -----------------------------------------------------------------------------------------
+
+FROM ros:humble-ros-base AS base
+
 ARG USERNAME=nano
 ARG USER_UID=1000
 ARG USER_GID=$USER_UID
@@ -21,11 +26,11 @@ ENV SHELL /bin/bash
 
 # Install additional ROS packages
 RUN apt-get install -y \
+    ros-$ROS_DISTRO-demo-nodes-cpp \
     ros-$ROS_DISTRO-teleop-twist-keyboard \
     ros-$ROS_DISTRO-xacro \
     ros-$ROS_DISTRO-ros2-control \
     ros-$ROS_DISTRO-ros2-controllers
-    # ros-$ROS_DISTRO-gazebo-ros2-control
 
 # Automatically source ROS setup script for the user
 RUN echo "source /opt/ros/$ROS_DISTRO/setup.bash" >> /home/$USERNAME/.bashrc
@@ -36,3 +41,17 @@ RUN adduser $USERNAME dialout
 # [Optional] Set the default user. Omit if you want to keep the default as root.
 USER $USERNAME
 CMD ["/bin/bash"]
+
+# -----------------------------------------------------------------------------------------
+# Local Build Stage: Used for local development with simulation and graphical tools.
+# -----------------------------------------------------------------------------------------
+
+FROM base AS local
+
+RUN sudo apt-get install -y \
+    ros-$ROS_DISTRO-joint-state-publisher-gui \
+    ros-$ROS_DISTRO-rviz2 \
+    # ros-$ROS_DISTRO-ros-gz \
+    ros-$ROS_DISTRO-gazebo-ros \
+    ros-$ROS_DISTRO-gazebo-plugins \
+    ros-$ROS_DISTRO-gazebo-ros2-control

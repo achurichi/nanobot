@@ -1,39 +1,44 @@
 {
-  "name": "ROS 2 Development Container",
-  "privileged": true,
-  "remoteUser": "nano",
-  "build": {
-      "dockerfile": "Dockerfile",
-      "args": {
-          "USERNAME": "nano"
-      }
-  },
-  "workspaceFolder": "/home/ros_ws",
-  "workspaceMount": "source=${localWorkspaceFolder},target=/home/ros_ws,type=bind",
-  "customizations": {
-      "vscode": {
-          "extensions":[
-              "ms-vscode.cpptools",
-              "ms-vscode.cpptools-themes",
-              "twxs.cmake",
-              "donjayamanne.python-extension-pack",
-              "eamodio.gitlens",
-              "ms-iot.vscode-ros"
-          ]
-      }
-  },
-  "containerEnv": {
-      "DISPLAY": "unix:0"
-  },
-  "runArgs": [
-      "--net=host",
-      "--pid=host",
-      "--ipc=host",
-      "--runtime=nvidia",
-      "-e", "DISPLAY=${env:DISPLAY}"
-  ],
-  "mounts": [
-     "source=/tmp/.X11-unix,target=/tmp/.X11-unix,type=bind,consistency=cached"
-  ],
-  "postCreateCommand": "sudo rosdep update && sudo rosdep install --from-paths src --ignore-src -y && sudo chown -R $(whoami) /home/ros_ws/"
+	"name": "ROS 2 Development Container",
+	"privileged": true,
+	"remoteUser": "nano",
+	"build": {
+		"dockerfile": "Dockerfile",
+		// "target": "base",
+		"target": "local",
+		"args": {
+			"USERNAME": "nano"
+		}
+	},
+	"workspaceFolder": "/home/ros_ws",
+	"workspaceMount": "source=${localWorkspaceFolder},target=/home/ros_ws,type=bind",
+	"customizations": {
+		"vscode": {
+			"extensions": [
+				"ms-vscode.cpptools",
+				"ms-vscode.cpptools-themes",
+				"twxs.cmake",
+				"donjayamanne.python-extension-pack",
+				"eamodio.gitlens",
+				"ms-iot.vscode-ros"
+			]
+		}
+	},
+	"containerEnv": {
+		"DISPLAY": "unix:0"
+	},
+	"runArgs": [
+		"--net=host",
+		"--pid=host",
+		"--ipc=host",
+		// "--runtime=nvidia",
+		"--gpus", "all",
+    "-e", "NVIDIA_DRIVER_CAPABILITIES=all",
+		"-e", "DISPLAY=${env:DISPLAY}"
+	],
+	"mounts": [
+		"source=/tmp/.X11-unix,target=/tmp/.X11-unix,type=bind,consistency=cached",
+		"source=/dev/dri,target=/dev/dri,type=bind,consistency=cached"
+	],
+	"postCreateCommand": "sudo rosdep update && sudo rosdep install --from-paths src --ignore-src -y && sudo chown -R $(whoami) /home/ros_ws/"
 }
