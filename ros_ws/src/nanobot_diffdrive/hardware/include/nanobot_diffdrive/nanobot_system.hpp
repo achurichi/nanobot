@@ -1,5 +1,5 @@
-#ifndef DIFFDRIVE_NANOBOT__NANOBOT_SYSTEM_HPP
-#define DIFFDRIVE_NANOBOT__NANOBOT_SYSTEM_HPP
+#ifndef NANOBOT_DIFFDRIVE__NANOBOT_SYSTEM_HPP_
+#define NANOBOT_DIFFDRIVE__NANOBOT_SYSTEM_HPP_
 
 #include <memory>
 #include <string>
@@ -16,29 +16,28 @@
 #include "rclcpp_lifecycle/node_interfaces/lifecycle_node_interface.hpp"
 #include "rclcpp_lifecycle/state.hpp"
 
-#include "diffdrive_nanobot/dynamixel_comms.hpp"
-#include "diffdrive_nanobot/wheel.hpp"
+#include "nanobot_diffdrive/dynamixel_comms.hpp"
+#include "nanobot_diffdrive/wheel.hpp"
 
-namespace diffdrive_nanobot
+namespace nanobot_diffdrive
 {
-  class DiffDriveNanobotHardware : public hardware_interface::SystemInterface
+  class NanobotDiffDriveHardware : public hardware_interface::SystemInterface
   {
     struct Config
     {
       std::string left_wheel_name = "";
       std::string right_wheel_name = "";
-      float wheel_radius = 0.0;
+      int left_motor_id = 0;
+      int right_motor_id = 0;
+      int velocity_limit = 0;
       float rpm_per_unit = 0.0;
       std::string device = "";
       float protocol_version = 0.0;
       int baud_rate = 0;
-      int left_motor_id = 0;
-      int right_motor_id = 0;
-      int velocity_limit = 0;
     };
 
   public:
-    RCLCPP_SHARED_PTR_DEFINITIONS(DiffDriveNanobotHardware)
+    RCLCPP_SHARED_PTR_DEFINITIONS(NanobotDiffDriveHardware)
 
     hardware_interface::CallbackReturn on_init(
         const hardware_interface::HardwareInfo &info) override;
@@ -72,6 +71,6 @@ namespace diffdrive_nanobot
     Wheel right_wheel_;
   };
 
-} // namespace diffdrive_nanobot
+} // namespace nanobot_diffdrive
 
-#endif // DIFFDRIVE_NANOBOT__NANOBOT_SYSTEM_HPP
+#endif // NANOBOT_DIFFDRIVE__NANOBOT_SYSTEM_HPP_

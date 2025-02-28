@@ -1,11 +1,11 @@
 <?xml version="1.0"?>
 <?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="3">
-  <name>control</name>
-  <version>0.0.0</version>
-  <description>TODO: Package description</description>
-  <maintainer email="achurichi@gmail.com">alan</maintainer>
-  <license>TODO: License declaration</license>
+  <name>nanobot_diffdrive</name>
+  <version>0.0.1</version>
+  <description>DiffDrive hardware controller for Dynamixel motors</description>
+  <maintainer email="achurichi@gmail.com">Alan Churichi</maintainer>
+  <license>MIT</license>
 
   <buildtool_depend>ament_cmake</buildtool_depend>
 
@@ -14,7 +14,6 @@
   <depend>diff_drive_controller</depend>
   <depend>joint_state_broadcaster</depend>
   <depend>robot_state_publisher</depend>
-  <depend>diffdrive_nanobot</depend>
   <depend>ros2controlcli</depend>
   <depend>ros2launch</depend>
   <depend>xacro</depend>

@@ -6,10 +6,10 @@
   <xacro:include filename="robot_core.xacro" />
 
   <xacro:if value="$(arg sim_mode)">
-    <xacro:include filename="$(find control)/description/gazebo_ros2_control.xacro" />
+    <xacro:include filename="$(find nanobot_diffdrive)/description/gazebo_ros2_control.xacro" />
   </xacro:if>
   <xacro:unless value="$(arg sim_mode)">
-    <xacro:include filename="$(find control)/description/ros2_control.xacro" />
+    <xacro:include filename="$(find nanobot_diffdrive)/description/ros2_control.xacro" />
   </xacro:unless>
 
 </robot>

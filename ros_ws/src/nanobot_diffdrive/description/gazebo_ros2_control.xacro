@@ -25,7 +25,7 @@
 
   <gazebo>
     <plugin name="gazebo_ros2_control" filename="libgazebo_ros2_control.so">
-      <parameters>$(find control)/config/gazebo_diffdrive_controllers.yaml</parameters>
+      <parameters>$(find nanobot_diffdrive)/config/gazebo_diffdrive_controllers.yaml</parameters>
 
       <!-- Limits -->
       <!-- <max_wheel_torque>200</max_wheel_torque> -->

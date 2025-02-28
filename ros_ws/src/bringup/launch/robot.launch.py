@@ -10,7 +10,7 @@ from launch_ros.actions import Node
 
 import xacro
 
-CONTROLER_PACKAGE_NAME = "control"
+CONTROLER_PACKAGE_NAME = "nanobot_diffdrive"
 DESCRIPTION_PACKAGE_NAME = "description"
 
 

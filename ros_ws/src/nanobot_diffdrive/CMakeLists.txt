@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.8)
-project(control)
+project(nanobot_diffdrive)
 
 if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
   add_compile_options(-Wall -Wextra -Wpedantic)
@@ -25,36 +25,38 @@ endforeach()
 
 ## COMPILE
 add_library(
-  diffdrive_nanobot
+  nanobot_diffdrive
   SHARED
   hardware/nanobot_system.cpp
+  hardware/wheel.cpp
+  hardware/dynamixel_comms.cpp
 )
-target_compile_features(diffdrive_nanobot PUBLIC cxx_std_17)
-target_include_directories(diffdrive_nanobot PUBLIC
+target_compile_features(nanobot_diffdrive PUBLIC cxx_std_17)
+target_include_directories(nanobot_diffdrive PUBLIC
 $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/hardware/include>
-$<INSTALL_INTERFACE:include/diffdrive_nanobot>
+$<INSTALL_INTERFACE:include/nanobot_diffdrive>
 )
 ament_target_dependencies(
-  diffdrive_nanobot PUBLIC
+  nanobot_diffdrive PUBLIC
   ${THIS_PACKAGE_INCLUDE_DEPENDS}
 )
 
 # Export hardware plugins
-pluginlib_export_plugin_description_file(hardware_interface diffdrive_nanobot.xml)
+pluginlib_export_plugin_description_file(hardware_interface nanobot_diffdrive.xml)
 
 # INSTALL
 install(
   DIRECTORY config description hardware
   DESTINATION share/${PROJECT_NAME}
 )
-install(TARGETS diffdrive_nanobot
-  EXPORT export_diffdrive_nanobot
+install(TARGETS nanobot_diffdrive
+  EXPORT export_nanobot_diffdrive
   ARCHIVE DESTINATION lib
   LIBRARY DESTINATION lib
   RUNTIME DESTINATION bin
 )
 
 ## EXPORTS
-ament_export_targets(export_diffdrive_nanobot HAS_LIBRARY_TARGET)
+ament_export_targets(export_nanobot_diffdrive HAS_LIBRARY_TARGET)
 ament_export_dependencies(${THIS_PACKAGE_INCLUDE_DEPENDS})
 ament_package()
