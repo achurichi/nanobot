@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="nanobot">
+
+  <ros2_control name="opi_ros2_control" type="system">
+    <hardware>
+      <plugin>diffdrive_nanobot/DiffDriveNanobotHardware</plugin>
+      <param name="left_wheel_name">left_wheel_joint</param>
+      <param name="right_wheel_name">right_wheel_joint</param>
+      <param name="wheel_radius">0.03375</param>
+      <param name="rpm_per_unit">0.229</param>
+      <param name="device">/dev/ttyUSB0</param>
+      <param name="protocol_version">2.0</param>
+      <param name="baud_rate">57600</param>
+      <param name="left_motor_id">1</param>
+      <param name="right_motor_id">2</param>
+      <param name="velocity_limit">250</param>
+    </hardware>
+    <joint name="left_wheel_joint">
+      <command_interface name="velocity" />
+      <state_interface name="position" />
+      <state_interface name="velocity" />
+    </joint>
+    <joint name="right_wheel_joint">
+      <command_interface name="velocity" />
+      <state_interface name="position" />
+      <state_interface name="velocity" />
+    </joint>
+  </ros2_control>
+
+</robot>

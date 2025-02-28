@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="opibot">
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="nanobot">
 
   <ros2_control name="GazeboSystem" type="system">
     <hardware>
@@ -25,7 +25,7 @@
 
   <gazebo>
     <plugin name="gazebo_ros2_control" filename="libgazebo_ros2_control.so">
-      <parameters>$(find description)/urdf/gazebo_diffdrive_controllers.yaml</parameters>
+      <parameters>$(find control)/config/gazebo_diffdrive_controllers.yaml</parameters>
 
       <!-- Limits -->
       <!-- <max_wheel_torque>200</max_wheel_torque> -->

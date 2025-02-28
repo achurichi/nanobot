@@ -1,0 +1,9 @@
+<library path="diffdrive_nanobot">
+  <class name="diffdrive_nanobot/DiffDriveNanobotHardware"
+         type="diffdrive_nanobot::DiffDriveNanobotHardware"
+         base_class_type="hardware_interface::SystemInterface">
+    <description>
+      System hardware interface-type for Jetson Nano Robot using ros2_control.
+    </description>
+  </class>
+</library>
