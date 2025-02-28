@@ -9,8 +9,8 @@ from launch.launch_description_sources import PythonLaunchDescriptionSource
 
 from launch_ros.actions import Node
 
-PACKAGE_NAME = "bringup"
-SIM_PACKAGE_NAME = "simulation"
+PACKAGE_NAME = "nanobot_bringup"
+SIM_PACKAGE_NAME = "nanobot_simulation"
 
 
 def generate_launch_description():
@@ -49,7 +49,7 @@ def generate_launch_description():
     spawn_entity = Node(
         package="gazebo_ros",
         executable="spawn_entity.py",
-        arguments=["-topic", "robot_description", "-entity", "my_bot"],
+        arguments=["-topic", "robot_description", "-entity", "nanobot"],
         output="screen",
     )
 

@@ -1,11 +1,11 @@
 <?xml version="1.0"?>
 <?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="3">
-  <name>description</name>
-  <version>0.0.0</version>
-  <description>TODO: Package description</description>
-  <maintainer email="achurichi@gmail.com">nano</maintainer>
-  <license>TODO: License declaration</license>
+  <name>nanobot_description</name>
+  <version>1.0.0</version>
+  <description>Description files</description>
+  <maintainer email="achurichi@gmail.com">Alan Churichi</maintainer>
+  <license>MIT</license>
 
   <buildtool_depend>ament_cmake</buildtool_depend>
 

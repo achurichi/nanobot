@@ -11,7 +11,7 @@ from launch_ros.actions import Node
 import xacro
 
 CONTROLER_PACKAGE_NAME = "nanobot_diffdrive"
-DESCRIPTION_PACKAGE_NAME = "description"
+DESCRIPTION_PACKAGE_NAME = "nanobot_description"
 
 
 def generate_launch_description():

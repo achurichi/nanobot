@@ -7,7 +7,7 @@ from launch.substitutions import LaunchConfiguration, Command
 from launch.actions import DeclareLaunchArgument
 from launch_ros.actions import Node
 
-PACKAGE_NAME = "description"
+PACKAGE_NAME = "nanobot_description"
 
 
 def generate_launch_description():
