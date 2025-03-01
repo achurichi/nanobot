@@ -3,7 +3,6 @@ FROM ros:humble-ros-base
 ARG USERNAME=dev
 ARG USER_UID=1000
 ARG USER_GID=$USER_UID
-ARG NANO_IP=192.168.0.189
 
 # Delete user if it exists in container (e.g Ubuntu Noble: ubuntu)
 RUN if id -u $USER_UID ; then userdel `id -un $USER_UID` ; fi
@@ -40,7 +39,6 @@ RUN apt-get install -y \
 
 # Automatically source ROS setup script and set ROS discovery server for the user
 RUN echo "source /opt/ros/$ROS_DISTRO/setup.bash" >> /home/$USERNAME/.bashrc
-RUN echo "export ROS_DISCOVERY_SERVER=$NANO_IP:11811" >> /home/$USERNAME/.bashrc
 
 # Add user to 'dialout' for serial port access
 RUN adduser $USERNAME dialout

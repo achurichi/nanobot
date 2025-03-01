@@ -14,7 +14,13 @@ The `scripts` folder contains useful scripts to manage the project:
 
 ## Controlling the Robot
 
-To move the robot using keyboard teleoperation, run:
+If you want to control the real robot (not in simulation) from an external machine connected to the same network, remember to set the ROS discovery server by running:
+
+```bash
+export ROS_DISCOVERY_SERVER=<jetson-nano-ip>:11811
+```
+
+To move the robot using keyboard, run:
 
 ```bash
 ros2 run teleop_twist_keyboard teleop_twist_keyboard --ros-args -r /cmd_vel:=/diff_controller/cmd_vel_unstamped
