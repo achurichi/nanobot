@@ -1,6 +1,6 @@
 controller_manager:
   ros__parameters:
-    update_rate: 10 # Hz
+    update_rate: 50 # Hz
 
     joint_state_broadcaster:
       type: joint_state_broadcaster/JointStateBroadcaster
@@ -13,9 +13,9 @@ diff_controller:
     left_wheel_names: ['left_wheel_joint']
     right_wheel_names: ['right_wheel_joint']
 
-    wheel_separation: 0.179
+    wheel_separation: 0.202
     wheel_radius: 0.03375
-    #wheels_per_side: 1 
+    wheels_per_side: 1
 
     # estimate_velocity_from_position: false
 

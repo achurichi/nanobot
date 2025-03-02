@@ -12,7 +12,7 @@
   <!-- Wheel dimensions -->
   <xacro:property name="wheel_radius" value="0.03375" /> <!-- 67.5mm diameter -->
   <xacro:property name="wheel_length" value="0.025" />
-  <xacro:property name="wheel_separation_from_body" value="0.0195" />
+  <xacro:property name="wheel_separation_from_body" value="0.0185" />
   <xacro:property name="caster_wheel_radius" value="${wheel_radius/2}" />
 
   <!-- Robot body and wheel mass -->

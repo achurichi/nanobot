@@ -1,6 +1,6 @@
 controller_manager:
   ros__parameters:
-    update_rate: 10
+    update_rate: 59
     use_sim_time: true
 
     diff_controller:
@@ -16,7 +16,7 @@ diff_controller:
 
     left_wheel_names: ['left_wheel_joint']
     right_wheel_names: ['right_wheel_joint']
-    wheel_separation: 0.179
+    wheel_separation: 0.202
     wheel_radius: 0.03375
     wheels_per_side: 1
 
