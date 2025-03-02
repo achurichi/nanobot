@@ -7,7 +7,8 @@
   <!-- Body dimensions -->
   <xacro:property name="body_x_dim" value="0.14" />
   <xacro:property name="body_y_dim" value="0.14" />
-  <xacro:property name="body_z_dim" value="0.071" />
+  <xacro:property name="body_z_dim" value="0.058" /> <!-- check -->
+  <!-- <xacro:property name="body_z_dim" value="0.071" /> -->
 
   <!-- Wheel dimensions -->
   <xacro:property name="wheel_radius" value="0.03375" /> <!-- 67.5mm diameter -->
@@ -16,7 +17,7 @@
   <xacro:property name="caster_wheel_radius" value="${wheel_radius/2}" />
 
   <!-- Robot body and wheel mass -->
-  <xacro:property name="body_mass" value="0.906" />
+  <xacro:property name="body_mass" value="0.859" />
   <xacro:property name="wheel_mass" value="0.028" />
   <xacro:property name="caster_wheel_mass" value="0.008" />
 
@@ -37,12 +38,16 @@
 
   <!-- Materials -->
 
-  <material name="white">
-    <color rgba="1 1 1 1" />
+  <material name="yellow">
+    <color rgba="1 1 0 1" />
   </material>
 
   <material name="black">
     <color rgba="0 0 0 1" />
+  </material>
+
+  <material name="red">
+    <color rgba="1 0 0 1" />
   </material>
 
   <!-- Links and joints definition -->
@@ -65,7 +70,7 @@
       <geometry>
         <box size="${body_x_dim} ${body_y_dim} ${body_z_dim}" />
       </geometry>
-      <material name="white" />
+      <material name="yellow" />
     </visual>
     <collision>
       <origin xyz="${body_x_dim/2} 0 ${body_z_dim/2}" rpy="0 0 0" />
@@ -80,7 +85,7 @@
   </link>
 
   <gazebo reference="body_link">
-    <material>Gazebo/White</material>
+    <material>Gazebo/Yellow</material>
   </gazebo>
 
   <!-- Left wheel -->

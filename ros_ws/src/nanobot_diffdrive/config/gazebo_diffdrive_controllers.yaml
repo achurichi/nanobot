@@ -1,6 +1,6 @@
 controller_manager:
   ros__parameters:
-    update_rate: 59
+    update_rate: 50
     use_sim_time: true
 
     diff_controller:

@@ -8,8 +8,7 @@ if [ "$1" == "sim" ]; then
     # Run Gazebo
     (
         source install/setup.bash
-        ros2 launch nanobot_bringup simulation.launch.py
-        # ros2 launch nanobot_bringup simulation.launch.py world:=./src/nanobot_simulation/worlds/box.world
+        ros2 launch nanobot_bringup simulation.launch.py world:=./src/nanobot_simulation/worlds/boxes.world
     ) &
     pid1=$!
 
