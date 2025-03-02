@@ -30,6 +30,7 @@ RUN apt-get install -y \
 
 # Install additional ROS packages for local development with simulation and graphical tools
 RUN apt-get install -y \
+    ros-$ROS_DISTRO-rqt-graph \
     ros-$ROS_DISTRO-joint-state-publisher-gui \
     ros-$ROS_DISTRO-rviz2 \
     # ros-$ROS_DISTRO-ros-gz \
@@ -44,8 +45,6 @@ USER $USERNAME
 
 # Finish ROS configuration for the user
 RUN echo "source /opt/ros/$ROS_DISTRO/setup.bash" >> /home/$USERNAME/.bashrc
-# RUN echo "export ROS_DISCOVERY_SERVER=127.0.0.1:11811" >> /home/$USERNAME/.bashrc
-# RUN echo "export FASTRTPS_DEFAULT_PROFILES_FILE=/home/ros_ws/super_client_configuration_file.xml" >> /home/$USERNAME/.bashrc
 
 RUN rosdep update
 
