@@ -62,7 +62,9 @@ Visualization Manager:
           Value: true
         front_caster_wheel_link:
           Value: true
-        laser_frame:
+        ldlidar_base_link:
+          Value: true
+        ldlidar_link:
           Value: true
         left_wheel_link:
           Value: true
@@ -83,8 +85,9 @@ Visualization Manager:
                 {}
               front_caster_wheel_link:
                 {}
-              laser_frame:
-                {}
+              ldlidar_base_link:
+                ldlidar_link:
+                  {}
             left_wheel_link:
               {}
             right_wheel_link:
@@ -128,7 +131,12 @@ Visualization Manager:
           Show Axes: false
           Show Trail: false
           Value: true
-        laser_frame:
+        ldlidar_base_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        ldlidar_link:
           Alpha: 1
           Show Axes: false
           Show Trail: false
@@ -166,14 +174,14 @@ Visualization Manager:
       Enabled: true
       Invert Rainbow: false
       Max Color: 255; 255; 255
-      Max Intensity: 0
+      Max Intensity: 240
       Min Color: 0; 0; 0
-      Min Intensity: 0
+      Min Intensity: 211
       Name: LaserScan
       Position Transformer: XYZ
       Selectable: true
       Size (Pixels): 3
-      Size (m): 0.03999999910593033
+      Size (m): 0.019999999552965164
       Style: Flat Squares
       Topic:
         Depth: 5
@@ -181,7 +189,7 @@ Visualization Manager:
         Filter size: 10
         History Policy: Keep Last
         Reliability Policy: Reliable
-        Value: /scan
+        Value: /lidar/scan
       Use Fixed Frame: true
       Use rainbow: true
       Value: true
@@ -231,7 +239,7 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz_default_plugins/Orbit
-      Distance: 5.55889892578125
+      Distance: 3.0204508304595947
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
@@ -246,10 +254,10 @@ Visualization Manager:
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 0.8253982067108154
+      Pitch: 0.5803983807563782
       Target Frame: <Fixed Frame>
       Value: Orbit (rviz)
-      Yaw: 0.05720537155866623
+      Yaw: 6.082215309143066
     Saved: ~
 Window Geometry:
   Displays:

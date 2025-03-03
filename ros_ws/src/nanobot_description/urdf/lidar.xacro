@@ -71,6 +71,10 @@
 
   <!-- Gazebo -->
 
+  <gazebo reference="ldlidar_base_link">
+    <material>Gazebo/Red</material>
+  </gazebo>
+
   <gazebo reference="ldlidar_link">
     <material>Gazebo/Red</material>
 
@@ -93,10 +97,10 @@
       </ray>
       <plugin name="laser_controller" filename="libgazebo_ros_ray_sensor.so">
         <ros>
-          <argument>~/out:=scan</argument>
+          <argument>~/out:=lidar/scan</argument>
         </ros>
         <output_type>sensor_msgs/LaserScan</output_type>
-        <frame_name>laser_frame</frame_name>
+        <frame_name>ldlidar_link</frame_name>
       </plugin>
     </sensor>
   </gazebo>
