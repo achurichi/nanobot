@@ -22,6 +22,7 @@ ENV SHELL /bin/bash
 
 # Install additional ROS packages and necessary tools
 RUN apt-get install -y \
+    ros-$ROS_DISTRO-rmw-cyclonedds-cpp \
     ros-$ROS_DISTRO-demo-nodes-cpp \
     ros-$ROS_DISTRO-teleop-twist-keyboard \
     ros-$ROS_DISTRO-xacro \
@@ -37,8 +38,8 @@ USER $USERNAME
 
 # Finish ROS configuration for the user
 RUN echo "source /opt/ros/$ROS_DISTRO/setup.bash" >> /home/$USERNAME/.bashrc
-RUN echo "export ROS_DISCOVERY_SERVER=127.0.0.1:11811" >> /home/$USERNAME/.bashrc
-RUN echo "export FASTRTPS_DEFAULT_PROFILES_FILE=/home/ros_ws/super_client_configuration_file.xml" >> /home/$USERNAME/.bashrc
+RUN echo "export RMW_IMPLEMENTATION=rmw_cyclonedds_cpp" >> /home/$USERNAME/.bashrc
+RUN echo "export CYCLONEDDS_URI=/home/ros_ws/cyclonedds_profile.xml" >> /home/$USERNAME/.bashrc
 
 RUN rosdep update
 

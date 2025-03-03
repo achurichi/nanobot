@@ -6,3 +6,4 @@ ros_ws/install
 ros_ws/log
 ros_ws/src/ThirdParty
 ros_ws/super_client_configuration_file_remote.xml
+ros_ws/cyclonedds_profile.log

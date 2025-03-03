@@ -19,19 +19,8 @@ if [ "$1" == "sim" ]; then
     wait $pid1
     wait $pid2
 else
-    # Run the ros launch file if no arguments are provided
+    # Run the robot launch file if no arguments are provided
 
-    # Run the FastDDS discovery server
-    fastdds discovery --server-id 0 &
-    pid1=$!
-
-    # Run the robot launch file
-    (
-        source install/setup.bash
-        ros2 launch nanobot_bringup robot.launch.py
-    ) &
-    pid2=$!
-
-    wait $pid1
-    wait $pid2
+    source install/setup.bash
+    ros2 launch nanobot_bringup robot.launch.py
 fi

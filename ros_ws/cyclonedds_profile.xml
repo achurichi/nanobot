@@ -1,0 +1,21 @@
+<CycloneDDS>
+  <Domain>
+    <!-- <General>
+      <Interfaces>
+        <NetworkInterface name="<name>" multicast="true" />
+      </Interfaces>
+      <AllowMulticast>true</AllowMulticast>
+      <EnableMulticastLoopback>true</EnableMulticastLoopback>
+    </General> -->
+    <Discovery>
+      <Peers>
+        <Peer address="<dev-machine-ip>" />
+        <Peer address="<nano-ip>" />
+      </Peers>
+      <ParticipantIndex>auto</ParticipantIndex>
+    </Discovery>
+    <!-- <Tracing>
+      <Verbosity>finest</Verbosity>
+    </Tracing> -->
+  </Domain>
+</CycloneDDS>
