@@ -7,7 +7,7 @@ from launch.substitutions import LaunchConfiguration, Command
 from launch.actions import DeclareLaunchArgument
 from launch_ros.actions import Node
 
-PACKAGE_NAME = "nanobot_description"
+DESCRIPTION_PACKAGE_NAME = "nanobot_description"
 
 
 def generate_launch_description():
@@ -16,8 +16,8 @@ def generate_launch_description():
     use_sim_time = LaunchConfiguration("use_sim_time")
 
     # Process the URDF file
-    pkg_path = os.path.join(get_package_share_directory(PACKAGE_NAME))
-    xacro_file = os.path.join(pkg_path, "urdf", "robot.urdf.xacro")
+    description_pkg_path = os.path.join(get_package_share_directory(DESCRIPTION_PACKAGE_NAME))
+    xacro_file = os.path.join(description_pkg_path, "urdf", "robot.urdf.xacro")
     robot_description_config = Command(
         ["xacro ", xacro_file, " sim_mode:=", use_sim_time]
     )

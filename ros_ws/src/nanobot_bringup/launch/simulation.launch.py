@@ -9,7 +9,7 @@ from launch.launch_description_sources import PythonLaunchDescriptionSource
 
 from launch_ros.actions import Node
 
-BRINGUP_PACKAGE_NAME = "nanobot_bringup"
+PACKAGE_NAME = "nanobot_bringup"
 SIM_PACKAGE_NAME = "nanobot_simulation"
 
 
@@ -18,7 +18,7 @@ def generate_launch_description():
         PythonLaunchDescriptionSource(
             [
                 os.path.join(
-                    get_package_share_directory(BRINGUP_PACKAGE_NAME), "launch", "rsp.launch.py"
+                    get_package_share_directory(PACKAGE_NAME), "launch", "rsp.launch.py"
                 )
             ]
         ),

@@ -2,42 +2,76 @@
 
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="nanobot">
 
-  <!-- <xacro:include filename="inertial_macros.xacro" /> -->
-
   <!-- LIDAR specs -->
-  <xacro:property name="laser_beam_height" value="0.0285" />
-  <xacro:property name="lidar_height" value="0.0348" />
-  <xacro:property name="lidar_radius" value="0.017645" />
-  <xacro:property name="lidar_mass" value="0.047" />
+  <xacro:property name="ldlidar_base_x_dim" value="0.039" />
+  <xacro:property name="ldlidar_base_y_dim" value="0.039" />
+  <xacro:property name="ldlidar_base_z_dim" value="0.0222" />
+  
+  <xacro:property name="ldlidar_link_height" value="0.0126" />
+  <xacro:property name="ldlidar_link_radius" value="0.017645" />
+  
+  <xacro:property name="ldlidar_mass" value="0.047" />
 
   <!-- Links and joints definition -->
 
-  <joint name="laser_joint" type="fixed">
+  <!-- Base -->
+
+  <joint name="ldlidar_base_joint" type="fixed">
     <parent link="body_link" />
-    <child link="laser_frame" />
-    <origin xyz="${body_x_dim/2} 0 ${body_z_dim + laser_beam_height}" rpy="0 0 ${pi/2}" />
+    <child link="ldlidar_base_link" />
+    <origin xyz="${body_x_dim/2} 0 ${body_z_dim}" rpy="0 0 ${pi/2}" />
   </joint>
 
-  <link name="laser_frame">
+  <link name="ldlidar_base_link">
     <visual>
-      <origin xyz="0 0 ${lidar_height/2 -laser_beam_height}" rpy="0 0 0" />
+      <origin xyz="0 0 ${ldlidar_base_z_dim/2}" rpy="0 0 0" />
       <geometry>
-        <cylinder length="${lidar_height}" radius="${lidar_radius}" />
+        <box size="${ldlidar_base_x_dim} ${ldlidar_base_y_dim} ${ldlidar_base_z_dim}" />
       </geometry>
       <material name="red" />
     </visual>
     <collision>
-      <origin xyz="0 0 ${lidar_height/2 -laser_beam_height}" rpy="0 0 0" />
+      <origin xyz="0 0 ${ldlidar_base_z_dim/2}" rpy="0 0 0" />
       <geometry>
-        <cylinder length="${lidar_height}" radius="${lidar_radius}" />
+        <box size="${ldlidar_base_x_dim} ${ldlidar_base_y_dim} ${ldlidar_base_z_dim}" />
       </geometry>
     </collision>
-    <xacro:inertial_cylinder mass="${lidar_mass}" length="${lidar_height}" radius="${lidar_radius}">
-      <origin xyz="0 0 ${lidar_height/2 -laser_beam_height}" rpy="0 0 0" />
+    <xacro:inertial_box mass="${ldlidar_mass/2}" x="${ldlidar_base_x_dim}" y="${ldlidar_base_y_dim}"
+      z="${ldlidar_base_z_dim}">
+      <origin xyz="0 0 ${ldlidar_base_z_dim/2}" rpy="0 0 0" />
+    </xacro:inertial_box>
+  </link>
+
+  <!-- Link -->
+
+  <joint name="ldlidar_link_joint" type="fixed">
+    <parent link="ldlidar_base_link" />
+    <child link="ldlidar_link" />
+    <origin xyz="0 0 ${ldlidar_base_z_dim + ldlidar_link_height/2}" rpy="0 0 0" />
+  </joint>
+
+  <link name="ldlidar_link">
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <cylinder length="${ldlidar_link_height}" radius="${ldlidar_link_radius}" />
+      </geometry>
+      <material name="red" />
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <cylinder length="${ldlidar_link_height}" radius="${ldlidar_link_radius}" />
+      </geometry>
+    </collision>
+    <xacro:inertial_cylinder mass="${ldlidar_mass/2}" length="${ldlidar_link_height}" radius="${ldlidar_link_radius}">
+      <origin xyz="0 0 0" rpy="0 0 0" />
     </xacro:inertial_cylinder>
   </link>
 
-  <gazebo reference="laser_frame">
+  <!-- Gazebo -->
+
+  <gazebo reference="ldlidar_link">
     <material>Gazebo/Red</material>
 
     <sensor name="laser" type="ray">
@@ -66,4 +100,5 @@
       </plugin>
     </sensor>
   </gazebo>
+  
 </robot>

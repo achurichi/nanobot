@@ -1,6 +1,6 @@
 #!/bin/bash
 
-cd "$(dirname "$0")/.."
+cd "/home/ros_ws"
 
 if [ $# -ne 1 ]; then
     echo "Usage: $(basename "$0") <new_ip_address>"

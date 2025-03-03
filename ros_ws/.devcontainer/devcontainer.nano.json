@@ -29,13 +29,15 @@
 		"--net=host",
 		"--pid=host",
 		"--ipc=host",
+    "--device=/dev/serial/by-id/",
 		"--runtime=nvidia",
 		"--gpus", "all",
     "-e", "NVIDIA_DRIVER_CAPABILITIES=all",
 		"-e", "DISPLAY=${env:DISPLAY}"
 	],
 	"mounts": [
-		"source=/tmp/.X11-unix,target=/tmp/.X11-unix,type=bind,consistency=cached"
+		"source=/tmp/.X11-unix,target=/tmp/.X11-unix,type=bind,consistency=cached",
+    "source=/dev/serial/by-id,target=/dev/serial/by-id,type=bind"
 	],
-	"postCreateCommand": "rosdep install --from-paths src --ignore-src -y && sudo chown -R $(whoami) /home/ros_ws/"
+	"postCreateCommand": "sudo chown -R $(whoami) /home/ros_ws/"
 }

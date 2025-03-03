@@ -3,8 +3,9 @@ import os
 from ament_index_python.packages import get_package_share_directory
 
 from launch import LaunchDescription
-from launch.actions import RegisterEventHandler
+from launch.actions import RegisterEventHandler, IncludeLaunchDescription
 from launch.event_handlers import OnProcessExit
+from launch.launch_description_sources import PythonLaunchDescriptionSource
 
 from launch_ros.actions import Node
 
@@ -12,6 +13,7 @@ import xacro
 
 CONTROLER_PACKAGE_NAME = "nanobot_diffdrive"
 DESCRIPTION_PACKAGE_NAME = "nanobot_description"
+LIDAR_PACKAGE_NAME = "nanobot_lidar"
 
 
 def generate_launch_description():
@@ -74,6 +76,16 @@ def generate_launch_description():
             on_exit=[joint_state_broadcaster_spawner],
         )
     )
+    
+    lidar = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(
+            [
+                os.path.join(
+                    get_package_share_directory(LIDAR_PACKAGE_NAME), "launch", "lidar.launch.py"
+                )
+            ]
+        ),
+    )
 
     return LaunchDescription(
         [
@@ -81,5 +93,6 @@ def generate_launch_description():
             robot_state_pub_node,
             robot_controller_spawner,
             delay_joint_state_broadcaster_after_robot_controller_spawner,
+            lidar,
         ]
     )

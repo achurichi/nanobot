@@ -10,7 +10,7 @@
       <param name="right_motor_id">2</param>
       <param name="velocity_limit">250</param>
       <param name="rpm_per_unit">0.229</param> <!-- see https://emanual.robotis.com/docs/en/dxl/x/xl430-w250/#goal-velocity -->
-      <param name="device">/dev/ttyUSB0</param>
+      <param name="device">/dev/serial/by-id/usb-FTDI_FT232R_USB_UART_ABSCDOT3-if00-port0</param>
       <param name="protocol_version">2.0</param>
       <param name="baud_rate">57600</param>
     </hardware>

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-cd "$(dirname "$0")/.."
+cd "/home/ros_ws"
 
 if [ "$1" == "sim" ]; then
     # Run Gazebo and Rviz if the script is called with 'sim' as an argument

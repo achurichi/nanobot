@@ -20,13 +20,15 @@ RUN apt-get update && apt-get upgrade -y
 RUN apt-get install -y python3-pip
 ENV SHELL /bin/bash
 
-# Install additional ROS packages
+# Install additional ROS packages and necessary tools
 RUN apt-get install -y \
     ros-$ROS_DISTRO-demo-nodes-cpp \
     ros-$ROS_DISTRO-teleop-twist-keyboard \
     ros-$ROS_DISTRO-xacro \
     ros-$ROS_DISTRO-ros2-control \
-    ros-$ROS_DISTRO-ros2-controllers
+    ros-$ROS_DISTRO-ros2-controllers \
+    udev \
+    libudev-dev
 
 # Add user to 'dialout' for serial port access
 RUN adduser $USERNAME dialout
