@@ -7,6 +7,8 @@
   
   <xacro:include filename="lidar.xacro" />
 
+  <xacro:include filename="camera.xacro" />
+
   <xacro:if value="$(arg sim_mode)">
     <xacro:include filename="$(find nanobot_diffdrive)/description/gazebo_ros2_control.xacro" />
   </xacro:if>
