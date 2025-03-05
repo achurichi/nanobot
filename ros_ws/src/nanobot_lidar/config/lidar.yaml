@@ -1,7 +1,3 @@
-# config/ldlidar.yaml
-#
-# Example configuration file to configure a `ldlidar_node`
-
 /**:
   ros__parameters:
     general:

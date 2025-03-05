@@ -14,6 +14,7 @@ import xacro
 CONTROLER_PACKAGE_NAME = "nanobot_diffdrive"
 DESCRIPTION_PACKAGE_NAME = "nanobot_description"
 LIDAR_PACKAGE_NAME = "nanobot_lidar"
+CAMERA_PACKAGE_NAME = "nanobot_camera"
 
 
 def generate_launch_description():
@@ -41,6 +42,7 @@ def generate_launch_description():
             ("/diff_controller/cmd_vel", "/cmd_vel"),
         ],
     )
+    
     robot_state_pub_node = Node(
         package="robot_state_publisher",
         executable="robot_state_publisher",
@@ -86,6 +88,16 @@ def generate_launch_description():
             ]
         ),
     )
+    
+    camera = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(
+            [
+                os.path.join(
+                    get_package_share_directory(CAMERA_PACKAGE_NAME), "launch", "camera.launch.py"
+                )
+            ]
+        ),
+    )
 
     return LaunchDescription(
         [
@@ -94,5 +106,6 @@ def generate_launch_description():
             robot_controller_spawner,
             delay_joint_state_broadcaster_after_robot_controller_spawner,
             lidar,
+            camera,
         ]
     )

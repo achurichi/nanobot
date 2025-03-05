@@ -1,0 +1,5 @@
+/v4l2_camera:
+    ros__parameters:
+      time_per_frame: [1, 30]
+      image_size: [640, 480]
+      camera_frame_id: "camera_optical_link"

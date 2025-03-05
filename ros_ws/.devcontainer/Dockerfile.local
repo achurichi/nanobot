@@ -21,19 +21,23 @@ RUN apt-get install -y python3-pip
 ENV SHELL /bin/bash
 
 # Install additional ROS packages and necessary tools
-RUN apt-get install -y \
+RUN apt-get update && apt-get install -y \
+    v4l-utils \
+    udev \
+    libudev-dev \
     ros-$ROS_DISTRO-rmw-cyclonedds-cpp \
     ros-$ROS_DISTRO-demo-nodes-cpp \
     ros-$ROS_DISTRO-teleop-twist-keyboard \
     ros-$ROS_DISTRO-xacro \
     ros-$ROS_DISTRO-ros2-control \
     ros-$ROS_DISTRO-ros2-controllers \
-    udev \
-    libudev-dev
-
+    ros-$ROS_DISTRO-v4l2-camera \
+    ros-$ROS_DISTRO-image-transport-plugins
+    
 # Install additional ROS packages for local development with simulation and graphical tools
 RUN apt-get install -y \
     ros-$ROS_DISTRO-rqt-graph \
+    ros-$ROS_DISTRO-rqt-image-view \ 
     ros-$ROS_DISTRO-joint-state-publisher-gui \
     ros-$ROS_DISTRO-rviz2 \
     # ros-$ROS_DISTRO-ros-gz \
@@ -41,8 +45,8 @@ RUN apt-get install -y \
     ros-$ROS_DISTRO-gazebo-plugins \
     ros-$ROS_DISTRO-gazebo-ros2-control
 
-# Add user to 'dialout' for serial port access
-RUN adduser $USERNAME dialout
+# Add user to 'dialout' and 'video' groups
+RUN adduser $USERNAME dialout && adduser $USERNAME video
 
 USER $USERNAME
 
