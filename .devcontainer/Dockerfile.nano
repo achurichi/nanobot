@@ -42,7 +42,7 @@ USER $USERNAME
 # Finish ROS configuration for the user
 RUN echo "source /opt/ros/$ROS_DISTRO/setup.bash" >> /home/$USERNAME/.bashrc
 RUN echo "export RMW_IMPLEMENTATION=rmw_cyclonedds_cpp" >> /home/$USERNAME/.bashrc
-RUN echo "export CYCLONEDDS_URI=/home/ros_ws/cyclonedds_profile.xml" >> /home/$USERNAME/.bashrc
+RUN echo "export CYCLONEDDS_URI=/home/nanobot/ros_ws/cyclonedds_profile.xml" >> /home/$USERNAME/.bashrc
 
 RUN rosdep update
 

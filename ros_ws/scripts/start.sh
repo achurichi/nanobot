@@ -1,6 +1,6 @@
 #!/bin/bash
 
-cd "/home/ros_ws"
+cd "/home/nanobot/ros_ws"
 
 if [ "$1" == "sim" ]; then
     # Run Gazebo if the script is called with 'sim' as an argument

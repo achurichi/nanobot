@@ -1,6 +1,6 @@
 #!/bin/bash
 
-cd "/home/ros_ws"
+cd "/home/nanobot/ros_ws"
 
 # Get third party repos
 vcs import src < third_parties.repos
@@ -9,7 +9,7 @@ vcs import src < third_parties.repos
 cd src/ThirdParty/ldrobot_lidar/scripts
 ./create_udev_rules.sh
 
-cd "/home/ros_ws"
+cd "/home/nanobot/ros_ws"
 
 # Install dependencies
 sudo apt-get update

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-cd "/home/ros_ws"
+cd "/home/nanobot/ros_ws"
 
 # Run rviz
 rviz2 -d ./src/nanobot_simulation/config/nanobot.rviz &

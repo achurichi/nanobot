@@ -1,5 +1,5 @@
 #!/bin/bash
 
-cd "/home/ros_ws"
+cd "/home/nanobot/ros_ws"
 
 rm -rf build/ install/ log/ src/ThirdParty/

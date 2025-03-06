@@ -1,15 +1,15 @@
 {
-	"name": "ROS 2 Local Development Container",
+	"name": "ROS 2 Jetson Nano Development Container",
 	"privileged": true,
-	"remoteUser": "dev",
+	"remoteUser": "nano",
 	"build": {
-		"dockerfile": "Dockerfile.local",
+		"dockerfile": "Dockerfile.nano",
 		"args": {
-			"USERNAME": "dev"
+			"USERNAME": "nano"
 		}
 	},
-	"workspaceFolder": "/home/ros_ws",
-	"workspaceMount": "source=${localWorkspaceFolder},target=/home/ros_ws,type=bind",
+	"workspaceFolder": "/home/nanobot",
+	"workspaceMount": "source=${localWorkspaceFolder},target=/home/nanobot,type=bind",
 	"customizations": {
 		"vscode": {
 			"extensions": [
@@ -29,13 +29,15 @@
 		"--net=host",
 		"--pid=host",
 		"--ipc=host",
+    "--device=/dev/serial/by-id/",
+		"--runtime=nvidia",
 		"--gpus", "all",
     "-e", "NVIDIA_DRIVER_CAPABILITIES=all",
 		"-e", "DISPLAY=${env:DISPLAY}"
 	],
 	"mounts": [
 		"source=/tmp/.X11-unix,target=/tmp/.X11-unix,type=bind,consistency=cached",
-		"source=/dev/dri,target=/dev/dri,type=bind,consistency=cached"
+    "source=/dev/serial/by-id,target=/dev/serial/by-id,type=bind"
 	],
-	"postCreateCommand": "sudo chown -R $(whoami) /home/ros_ws/"
+	"postCreateCommand": "sudo chown -R $(whoami) /home/nanobot/"
 }
