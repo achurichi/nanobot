@@ -29,6 +29,7 @@
 		"--net=host",
 		"--pid=host",
 		"--ipc=host",
+    "--cap-add=ALL",
     "--device=/dev/serial/by-id/",
 		"--runtime=nvidia",
 		"--gpus", "all",
@@ -37,7 +38,8 @@
 	],
 	"mounts": [
 		"source=/tmp/.X11-unix,target=/tmp/.X11-unix,type=bind,consistency=cached",
-    "source=/dev/serial/by-id,target=/dev/serial/by-id,type=bind"
+    "source=/dev/serial/by-id,target=/dev/serial/by-id,type=bind",
+    "source=/lib/modules/4.9.337-tegra,target=/lib/modules/4.9.337-tegra,type=bind"
 	],
 	"postCreateCommand": "sudo chown -R $(whoami) /home/nanobot/"
 }

@@ -8,12 +8,12 @@
   
   <!-- Links and joints definition -->
 
-  <joint name="imu_joint" type="fixed">
-    <parent link="body_link" />
-    <child link="imu_link" />
-    <origin xyz="${body_x_dim/2} 0 ${body_z_dim - imu_body_z_offset - imu_z_dim}" rpy="${pi} 0 0" />
+  <joint name="imu_base_joint" type="fixed">
+    <parent link="base_link" />
+    <child link="imu_base_link" />
+    <origin xyz="0 0 ${body_z_dim - body_z_offset - imu_body_z_offset - imu_z_dim}" rpy="0 0 0" />
   </joint>
 
-  <link name="imu_link" />
+  <link name="imu_base_link" />
 
 </robot>

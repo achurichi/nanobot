@@ -25,6 +25,8 @@ RUN apt-get update && apt-get install -y \
     v4l-utils \
     udev \
     libudev-dev \
+    kmod \
+    openssh-client \
     ros-$ROS_DISTRO-rmw-cyclonedds-cpp \
     ros-$ROS_DISTRO-demo-nodes-cpp \
     ros-$ROS_DISTRO-teleop-twist-keyboard \
@@ -32,7 +34,17 @@ RUN apt-get update && apt-get install -y \
     ros-$ROS_DISTRO-ros2-control \
     ros-$ROS_DISTRO-ros2-controllers \
     ros-$ROS_DISTRO-v4l2-camera \
-    ros-$ROS_DISTRO-image-transport-plugins
+    ros-$ROS_DISTRO-image-transport-plugins \
+    ros-$ROS_DISTRO-imu-filter-madgwick \
+    ros-$ROS_DISTRO-diagnostic-updater \
+    ros-$ROS_DISTRO-nav2-util \
+    ros-$ROS_DISTRO-nav2-msgs \
+    ros-$ROS_DISTRO-bond \
+    ros-$ROS_DISTRO-bondcpp \
+    ros-$ROS_DISTRO-ament-cmake-clang-format \
+    ros-$ROS_DISTRO-nav2-lifecycle-manager \
+    ros-$ROS_DISTRO-rviz2 \
+    ros-$ROS_DISTRO-slam-toolbox
     
 # Add user to 'dialout' and 'video' groups
 RUN adduser $USERNAME dialout && adduser $USERNAME video

@@ -15,6 +15,7 @@ CONTROLER_PACKAGE_NAME = "nanobot_diffdrive"
 DESCRIPTION_PACKAGE_NAME = "nanobot_description"
 LIDAR_PACKAGE_NAME = "nanobot_lidar"
 CAMERA_PACKAGE_NAME = "nanobot_camera"
+IMU_PACKAGE_NAME = "nanobot_imu"
 
 
 def generate_launch_description():
@@ -98,6 +99,16 @@ def generate_launch_description():
             ]
         ),
     )
+    
+    imu = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(
+            [
+                os.path.join(
+                    get_package_share_directory(IMU_PACKAGE_NAME), "launch", "imu.launch.py"
+                )
+            ]
+        ),
+    )
 
     return LaunchDescription(
         [
@@ -107,5 +118,6 @@ def generate_launch_description():
             delay_joint_state_broadcaster_after_robot_controller_spawner,
             lidar,
             camera,
+            imu,
         ]
     )

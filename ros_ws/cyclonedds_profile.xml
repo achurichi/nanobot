@@ -13,6 +13,7 @@
         <Peer address="<nano-ip>" />
       </Peers>
       <ParticipantIndex>auto</ParticipantIndex>
+      <MaxAutoParticipantIndex>1000</MaxAutoParticipantIndex>
     </Discovery>
     <!-- <Tracing>
       <Verbosity>finest</Verbosity>

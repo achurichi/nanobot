@@ -2,4 +2,4 @@
 
 cd "/home/nanobot/ros_ws"
 
-rm -rf build/ install/ log/ src/ThirdParty/
+rm -rf build/ install/ log/ src/third_party/
