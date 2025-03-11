@@ -45,6 +45,9 @@ RUN apt-get update && apt-get install -y \
     ros-$ROS_DISTRO-nav2-lifecycle-manager \
     ros-$ROS_DISTRO-rviz2 \
     ros-$ROS_DISTRO-slam-toolbox
+
+# Install tools for IMU calibration
+RUN pip install mpu9250-jmdev smbus2
     
 # Add user to 'dialout' and 'video' groups
 RUN adduser $USERNAME dialout && adduser $USERNAME video
