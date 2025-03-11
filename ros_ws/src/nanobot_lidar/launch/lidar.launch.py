@@ -3,7 +3,8 @@ import os
 from ament_index_python.packages import get_package_share_directory
 
 from launch import LaunchDescription
-from launch.actions import ExecuteProcess, TimerAction
+from launch.actions import ExecuteProcess, RegisterEventHandler
+from launch.event_handlers import OnProcessExit
 
 from launch_ros.actions import ComposableNodeContainer, LoadComposableNodes
 from launch_ros.descriptions import ComposableNode
@@ -45,27 +46,45 @@ def generate_launch_description():
     )
     
     # Lifecycle Transitions
+    wait_for_node = ExecuteProcess(
+        name="wait_for_node",
+        cmd=[f"until ros2 lifecycle get /{NODE_NAME} | grep -q 'unconfigured'; do sleep 1; done"],
+        shell=True,
+        output="screen"
+    )
+        
     configure_node = ExecuteProcess(
-        cmd=["ros2", "lifecycle", "set", f"/{NODE_NAME}", "configure"],
+        cmd=[f"ros2 lifecycle set /{NODE_NAME} configure"],
+        shell=True,
         output="screen"
     )
 
     activate_node = ExecuteProcess(
-        cmd=["ros2", "lifecycle", "set", f"/{NODE_NAME}", "activate"],
+        cmd=[f"ros2 lifecycle set /{NODE_NAME} activate"],
+        shell=True,
         output="screen"
     )
+    
+    delayed_configuration = RegisterEventHandler(
+        event_handler=OnProcessExit(
+            target_action=wait_for_node,
+            on_exit=[configure_node],
+        )
+    )
 
-    # Delay activation to ensure the node is properly configured first
-    delayed_activation = TimerAction(
-        period=3.0,  # Wait 3 seconds before activating
-        actions=[activate_node]
+    delayed_activation = RegisterEventHandler(
+        event_handler=OnProcessExit(
+            target_action=configure_node,
+            on_exit=[activate_node],
+        )
     )
 
     return LaunchDescription(
         [
             lidar_container,
             load_composable_node,
-            configure_node,
-            delayed_activation,
+            wait_for_node,
+            delayed_configuration,
+            delayed_activation
         ]
     )
