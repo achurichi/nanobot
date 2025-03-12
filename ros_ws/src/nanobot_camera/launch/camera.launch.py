@@ -15,14 +15,11 @@ def generate_launch_description():
     
     return LaunchDescription([
         Node(
-            package='v4l2_camera',
-            executable='v4l2_camera_node',
-            name='v4l2_camera_node',
+            package='realsense2_camera',
+            executable='realsense2_camera_node',
+            name='realsense_camera',
+            output='screen',
             parameters=[camera_config_path],
-            remappings=[
-                ("/image_raw", "/camera/image_raw"),
-                ("/image_raw/compressed", "/camera/image_raw/compressed"),
-            ],
         )
     ])
 
