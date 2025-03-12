@@ -40,7 +40,7 @@
   <gazebo reference="camera_link">
     <material>Gazebo/Red</material>
 
-    <sensor name="camera" type="camera">
+    <sensor name="camera" type="depth">
       <pose> 0 0 0 0 0 0 </pose>
       <visualize>true</visualize>
       <update_rate>10</update_rate>
@@ -57,6 +57,9 @@
         </clip>
       </camera>
       <plugin name="camera_controller" filename="libgazebo_ros_camera.so">
+        <ros>
+          <remapping>camera/points:=camera/realsense_camera/depth/color/points</remapping>
+        </ros>
         <frame_name>camera_optical_link</frame_name>
       </plugin>
     </sensor>
