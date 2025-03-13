@@ -78,11 +78,11 @@
   <gazebo reference="ldlidar_link">
     <material>Gazebo/Red</material>
 
-    <sensor name="laser" type="ray">
+    <sensor name="laser" type="gpu_lidar">
       <pose> 0 0 0 0 0 0 </pose>
       <visualize>true</visualize>
       <update_rate>10</update_rate>
-      <ray>
+      <lidar>
         <scan>
           <horizontal>
             <samples>360</samples>
@@ -94,14 +94,9 @@
           <min>0.02</min>
           <max>12</max>
         </range>
-      </ray>
-      <plugin name="laser_controller" filename="libgazebo_ros_ray_sensor.so">
-        <ros>
-          <argument>~/out:=lidar/scan</argument>
-        </ros>
-        <output_type>sensor_msgs/LaserScan</output_type>
-        <frame_name>ldlidar_link</frame_name>
-      </plugin>
+      </lidar>
+      <topic>lidar/scan</topic>
+      <gz_frame_id>ldlidar_link</gz_frame_id>
     </sensor>
   </gazebo>
   

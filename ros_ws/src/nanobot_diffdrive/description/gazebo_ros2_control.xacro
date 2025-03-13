@@ -3,7 +3,7 @@
 
   <ros2_control name="GazeboSystem" type="system">
     <hardware>
-      <plugin>gazebo_ros2_control/GazeboSystem</plugin>
+      <plugin>ign_ros2_control/IgnitionSystem</plugin>
     </hardware>
     <joint name="left_wheel_joint">
       <command_interface name="velocity">
@@ -24,12 +24,8 @@
   </ros2_control>
 
   <gazebo>
-    <plugin name="ign_ros2_control::IgnitionROS2ControlPlugin" filename="ign_ros2_control-system">
+    <plugin filename="libign_ros2_control-system.so" name="ign_ros2_control::IgnitionROS2ControlPlugin">
       <parameters>$(find nanobot_diffdrive)/config/gazebo_diffdrive_controllers.yaml</parameters>
-
-      <!-- Limits -->
-      <!-- <max_wheel_torque>200</max_wheel_torque> -->
-      <!-- <max_wheel_acceletarion>10</max_wheel_acceletarion> -->
     </plugin>
   </gazebo>
 
