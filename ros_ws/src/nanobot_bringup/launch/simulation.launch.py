@@ -4,7 +4,7 @@ from ament_index_python.packages import get_package_share_directory
 
 
 from launch import LaunchDescription
-from launch.actions import IncludeLaunchDescription
+from launch.actions import IncludeLaunchDescription, ExecuteProcess
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 
 from launch_ros.actions import Node
@@ -14,42 +14,32 @@ SIM_PACKAGE_NAME = "nanobot_simulation"
 
 
 def generate_launch_description():
+    rsp_launch_file = os.path.join(
+        get_package_share_directory(PACKAGE_NAME), "launch", "rsp.launch.py"
+    )
+
     rsp = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource(
-            [
-                os.path.join(
-                    get_package_share_directory(PACKAGE_NAME), "launch", "rsp.launch.py"
-                )
-            ]
-        ),
+        PythonLaunchDescriptionSource([rsp_launch_file]),
         launch_arguments={"use_sim_time": "true"}.items(),
     )
 
-    gazebo_params_file = os.path.join(
-        get_package_share_directory(SIM_PACKAGE_NAME), "config", "gazebo_params.yaml"
+    world_file = os.path.join(
+        get_package_share_directory(SIM_PACKAGE_NAME), "worlds", "boxes.sdf"
+    )
+    
+    gazebo = ExecuteProcess(
+        cmd=["ign", "gazebo", "-r", "-v", "4", world_file],
+        output="screen",
     )
 
-    # Include the Gazebo launch file, provided by the gazebo_ros package
-    gazebo = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource(
-            [
-                os.path.join(
-                    get_package_share_directory("gazebo_ros"),
-                    "launch",
-                    "gazebo.launch.py",
-                )
-            ]
-        ),
-        launch_arguments={
-            "extra_gazebo_args": "--ros-args --params-file " + gazebo_params_file
-        }.items(),
-    )
-
-    # Run the spawner node from the gazebo_ros package. The entity name doesn't really matter if you only have a single robot.
     spawn_entity = Node(
-        package="gazebo_ros",
-        executable="spawn_entity.py",
-        arguments=["-topic", "robot_description", "-entity", "nanobot"],
+        package="ros_gz_sim",
+        executable="create",
+        arguments=[
+            "-topic", "/robot_description",
+            "-name", "nanobot",
+            "-z", "0.05"  # Moves the robot 5 cm above the ground
+        ],
         output="screen",
     )
 
@@ -65,7 +55,6 @@ def generate_launch_description():
         arguments=["joint_broad"],
     )
 
-    # Launch them all!
     return LaunchDescription(
         [
             rsp,

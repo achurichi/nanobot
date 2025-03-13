@@ -24,7 +24,7 @@
   </ros2_control>
 
   <gazebo>
-    <plugin name="gazebo_ros2_control" filename="libgazebo_ros2_control.so">
+    <plugin name="ign_ros2_control::IgnitionROS2ControlPlugin" filename="ign_ros2_control-system">
       <parameters>$(find nanobot_diffdrive)/config/gazebo_diffdrive_controllers.yaml</parameters>
 
       <!-- Limits -->
