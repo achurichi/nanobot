@@ -3,7 +3,7 @@
 	"privileged": true,
 	"remoteUser": "nano",
 	"build": {
-		"dockerfile": "Dockerfile.nano",
+		"dockerfile": "Dockerfile",
 		"args": {
 			"USERNAME": "nano"
 		}

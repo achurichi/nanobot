@@ -1,11 +1,11 @@
 {
 	"name": "ROS 2 Local Development Container",
 	"privileged": true,
-	"remoteUser": "dev",
+	"remoteUser": "nano",
 	"build": {
-		"dockerfile": "Dockerfile.local",
+		"dockerfile": "Dockerfile",
 		"args": {
-			"USERNAME": "dev"
+			"USERNAME": "nano"
 		}
 	},
 	"workspaceFolder": "/home/nanobot",
