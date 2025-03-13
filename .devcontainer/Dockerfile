@@ -26,6 +26,7 @@ RUN apt-get update && apt-get install -y \
   libudev-dev \
   kmod \
   openssh-client \
+  joystick \
   ros-$ROS_DISTRO-rmw-cyclonedds-cpp \
   ros-$ROS_DISTRO-demo-nodes-cpp \
   ros-$ROS_DISTRO-teleop-twist-keyboard \
@@ -44,6 +45,8 @@ RUN apt-get update && apt-get install -y \
   ros-$ROS_DISTRO-image-transport-plugins \
   ros-$ROS_DISTRO-librealsense2* \
   ros-$ROS_DISTRO-realsense2* \
+  ros-$ROS_DISTRO-joy \
+  ros-$ROS_DISTRO-teleop-twist-joy \
   ros-$ROS_DISTRO-rqt-graph \
   ros-$ROS_DISTRO-rqt-image-view \ 
   ros-$ROS_DISTRO-joint-state-publisher-gui \

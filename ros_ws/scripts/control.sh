@@ -11,9 +11,14 @@ pid1=$!
 ros2 run rqt_image_view rqt_image_view & 
 pid2=$!
 
+# Run joystick controller
+ros2 launch nanobot_joystick joystick.launch.py & 
+pid2=$!
+
 # Run the teleop_twist_keyboard node
 # TODO: change the default speed
 ros2 run teleop_twist_keyboard teleop_twist_keyboard --ros-args -r /cmd_vel:=/diff_controller/cmd_vel_unstamped
 
 wait $pid1
 wait $pid2
+wait $pid3
