@@ -47,14 +47,14 @@ RUN apt-get update && apt-get install -y \
   ros-$ROS_DISTRO-realsense2* \
   ros-$ROS_DISTRO-joy \
   ros-$ROS_DISTRO-teleop-twist-joy \
+  # ros-$ROS_DISTRO-twist-stamper \
+  # ros-$ROS_DISTRO-twist-mux \
   ros-$ROS_DISTRO-rqt-graph \
   ros-$ROS_DISTRO-rqt-image-view \ 
   ros-$ROS_DISTRO-joint-state-publisher-gui \
   ros-$ROS_DISTRO-rviz2 \
   ros-$ROS_DISTRO-ros-gz \
   ros-$ROS_DISTRO-ign-ros2-control
-  # ros-$ROS_DISTRO-twist-mux \
-  # ros-$ROS_DISTRO-twist-stamper
 
 # Install tools for IMU calibration
 RUN pip install mpu9250-jmdev smbus2

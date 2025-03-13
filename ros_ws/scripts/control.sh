@@ -2,6 +2,8 @@
 
 cd "/home/nanobot/ros_ws"
 
+source install/setup.bash
+
 # Run rviz
 rviz2 -d ./src/nanobot_simulation/config/nanobot.rviz &
 pid1=$!
