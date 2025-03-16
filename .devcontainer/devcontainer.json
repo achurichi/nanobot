@@ -1,0 +1,63 @@
+{
+	"name": "ROS 2 Development Container",
+	"privileged": true,
+	"remoteUser": "nano",
+	"build": {
+		"dockerfile": "Dockerfile",
+		"args": {
+			"USERNAME": "nano"
+		}
+	},
+	"workspaceFolder": "/home/nanobot",
+	"workspaceMount": "source=${localWorkspaceFolder},target=/home/nanobot,type=bind",
+	"customizations": {
+		"vscode": {
+			"extensions": [
+				"ms-vscode.cpptools",
+				"ms-vscode.cpptools-themes",
+				"twxs.cmake",
+				"donjayamanne.python-extension-pack",
+				"eamodio.gitlens",
+				"ms-iot.vscode-ros"
+			]
+		}
+	},
+	"postCreateCommand": "sudo chown -R $(whoami) /home/nanobot/",
+
+  // Jetson Nano Development
+	"runArgs": [
+		"--net=host",
+		"--pid=host",
+		"--ipc=host",
+    // "--cap-add=ALL",
+    "--device=/dev/serial/by-id/",
+		"--runtime=nvidia"
+		// "--gpus", "all",
+    // "-e", "NVIDIA_DRIVER_CAPABILITIES=all",
+		// "-e", "DISPLAY=${env:DISPLAY}"
+	],
+	"mounts": [
+		// "source=/tmp/.X11-unix,target=/tmp/.X11-unix,type=bind,consistency=cached",
+    "source=/lib/modules/4.9.337-tegra,target=/lib/modules/4.9.337-tegra,type=bind",
+    "source=/dev/serial/by-id,target=/dev/serial/by-id,type=bind",
+    "source=/dev/input,target=/dev/input,type=bind"
+	]
+
+  // Local Development
+  // "containerEnv": {
+	// 	"DISPLAY": "unix:0"
+	// },
+	// "runArgs": [
+	// 	"--net=host",
+	// 	"--pid=host",
+	// 	"--ipc=host",
+	// 	"--gpus", "all",
+  //   "-e", "NVIDIA_DRIVER_CAPABILITIES=all",
+	// 	"-e", "DISPLAY=${env:DISPLAY}"
+	// ],
+	// "mounts": [
+	// 	"source=/tmp/.X11-unix,target=/tmp/.X11-unix,type=bind,consistency=cached",
+	// 	"source=/dev/dri,target=/dev/dri,type=bind,consistency=cached",
+  //  "source=/dev/input,target=/dev/input,type=bind"
+	// ]
+}
