@@ -1,0 +1,32 @@
+version: '3'
+
+services:
+  ros2:
+    container_name: ros2
+    build:
+      context: .
+      dockerfile: Dockerfile
+      # args:
+      #   USERNAME: 'nano'
+    restart: always
+    tty: true
+    # user: 'nano'
+    volumes:
+      - ../:/home/nanobot
+    # - ${localWorkspaceFolder}:/home/nanobot
+      # - /tmp/.X11-unix:/tmp/.X11-unix:cached
+      # - /lib/modules/4.9.337-tegra:/lib/modules/4.9.337-tegra
+      # - /dev/serial/by-id:/dev/serial/by-id
+      # - /dev/input:/dev/input
+      - ${VOLUME_1:-/dev/null}:${VOLUME_1:-/.devnull}
+      - ${VOLUME_2:-/dev/null}:${VOLUME_2:-/.devnull}
+    # environment:
+    #   DISPLAY: "unix:0"
+    #   NVIDIA_DRIVER_CAPABILITIES: "all"
+    # runtime: nvidia
+    # gpus: all
+    # network_mode: 'host'
+    # pid: 'host'
+    # ipc: 'host'
+    # cap_add:
+    #   - ALL

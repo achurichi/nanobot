@@ -1,0 +1,44 @@
+{
+	"name": "ROS 2 Local Development Container",
+	"privileged": true,
+	"remoteUser": "nano",
+	// "build": {
+	// 	"dockerfile": "Dockerfile",
+	// 	"args": {
+	// 		"USERNAME": "nano"
+	// 	}
+	// },
+	"dockerComposeFile": ["docker-compose.yaml"],
+	"service": "ros2",
+	"workspaceFolder": "/home/nanobot",
+	// "workspaceMount": "source=${localWorkspaceFolder},target=/home/nanobot,type=bind",
+	// "customizations": {
+	// 	"vscode": {
+	// 		"extensions": [
+	// 			"ms-vscode.cpptools",
+	// 			"ms-vscode.cpptools-themes",
+	// 			"twxs.cmake",
+	// 			"donjayamanne.python-extension-pack",
+	// 			"eamodio.gitlens",
+	// 			"ms-iot.vscode-ros"
+	// 		]
+	// 	}
+	// },
+	// "containerEnv": {
+	// 	"DISPLAY": "unix:0"
+	// },
+	// "runArgs": [
+	// 	"--net=host",
+	// 	"--pid=host",
+	// 	"--ipc=host",
+	// 	"--gpus", "all",
+	//   "-e", "NVIDIA_DRIVER_CAPABILITIES=all",
+	// 	"-e", "DISPLAY=${env:DISPLAY}"
+	// ],
+	// "mounts": [
+	// 	"source=/tmp/.X11-unix,target=/tmp/.X11-unix,type=bind,consistency=cached",
+	// 	"source=/dev/dri,target=/dev/dri,type=bind,consistency=cached",
+	//   "source=/dev/input,target=/dev/input,type=bind"
+	// ],
+	"postCreateCommand": "sudo chown -R $(whoami) /home/nanobot/"
+}
