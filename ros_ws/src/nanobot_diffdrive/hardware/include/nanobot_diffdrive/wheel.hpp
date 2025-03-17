@@ -12,11 +12,12 @@ public:
   double pos = 0;
   double vel = 0;
   double rad_per_unit = 0;
+  double rad_per_pulse = 0;
 
   Wheel() = default;
-  Wheel(const std::string &wheel_name, float rpm_per_unit);
+  Wheel(const std::string &wheel_name, float rpm_per_unit, float deg_per_pulse);
 
-  void setup(const std::string &wheel_name, float rpm_per_unit);
+  void setup(const std::string &wheel_name, float rpm_per_unit, float deg_per_pulse);
 };
 
 #endif // NANOBOT_DIFFDRIVE__WHEEL_HPP_

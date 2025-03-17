@@ -18,7 +18,7 @@ public:
   std::string shutdownMotors();
 
   std::string write(int left_motor_value, int right_motor_value);
-  std::string read(int &left_motor_value, int &right_motor_value);
+  std::string read(int &left_vel_value, int &left_pos_value, int &right_vel_value, int &right_pos_value);
 
 private:
   static const int ADDR_OPERATING_MODE = 11;
@@ -26,6 +26,7 @@ private:
   static const int ADDR_TORQUE_ENABLE = 64;
   static const int ADDR_GOAL_VELOCITY = 104;
   static const int ADDR_PRESENT_VELOCITY = 128;
+  static const int ADDR_PRESENT_POSITION = 132;
 
   std::unique_ptr<dynamixel::PortHandler> portHandler_;
   std::unique_ptr<dynamixel::PacketHandler> packetHandler_;

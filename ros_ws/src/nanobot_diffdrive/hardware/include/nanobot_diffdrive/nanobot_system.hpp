@@ -31,6 +31,7 @@ namespace nanobot_diffdrive
       int right_motor_id = 0;
       int velocity_limit = 0;
       float rpm_per_unit = 0.0;
+      float deg_per_pulse = 0.0;
       std::string device = "";
       float protocol_version = 0.0;
       int baud_rate = 0;

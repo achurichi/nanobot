@@ -29,12 +29,13 @@ namespace nanobot_diffdrive
     cfg_.right_motor_id = std::stoi(info_.hardware_parameters["right_motor_id"]);
     cfg_.velocity_limit = std::stoi(info_.hardware_parameters["velocity_limit"]);
     cfg_.rpm_per_unit = std::stof(info_.hardware_parameters["rpm_per_unit"]);
+    cfg_.deg_per_pulse = std::stof(info_.hardware_parameters["deg_per_pulse"]);
     cfg_.device = info_.hardware_parameters["device"];
     cfg_.protocol_version = std::stof(info_.hardware_parameters["protocol_version"]);
     cfg_.baud_rate = std::stoi(info_.hardware_parameters["baud_rate"]);
 
-    left_wheel_.setup(cfg_.left_wheel_name, cfg_.rpm_per_unit);
-    right_wheel_.setup(cfg_.right_wheel_name, cfg_.rpm_per_unit);
+    left_wheel_.setup(cfg_.left_wheel_name, cfg_.rpm_per_unit, cfg_.deg_per_pulse);
+    right_wheel_.setup(cfg_.right_wheel_name, cfg_.rpm_per_unit, cfg_.deg_per_pulse);
 
     for (const hardware_interface::ComponentInfo &joint : info_.joints)
     {
@@ -179,21 +180,32 @@ namespace nanobot_diffdrive
   }
 
   hardware_interface::return_type NanobotDiffDriveHardware::read(
-      const rclcpp::Time & /*time*/, const rclcpp::Duration &period)
+      const rclcpp::Time & /*time*/, const rclcpp::Duration & /*period*/)
   {
-    int left_wheel_value;
-    int right_wheel_value;
+    int left_vel_value;
+    int left_pos_value;
+    int right_vel_value;
+    int right_pos_value;
 
-    comms_.read(left_wheel_value, right_wheel_value);
+    comms_.read(left_vel_value, left_pos_value, right_vel_value, right_pos_value);
 
-    left_wheel_.vel = left_wheel_value * left_wheel_.rad_per_unit;
-    right_wheel_.vel = -right_wheel_value * right_wheel_.rad_per_unit;
+    left_wheel_.vel = left_vel_value * left_wheel_.rad_per_unit;
+    left_wheel_.pos = left_pos_value * left_wheel_.rad_per_pulse;
+
+    right_wheel_.vel = -right_vel_value * right_wheel_.rad_per_unit;
+    right_wheel_.pos = -right_pos_value * right_wheel_.rad_per_pulse;
 
     // RCLCPP_INFO(
     //     rclcpp::get_logger("NanobotDiffDriveHardware"),
     //     "read vel: %f %f",
     //     left_wheel_.vel,
     //     right_wheel_.vel);
+
+    // RCLCPP_INFO(
+    //     rclcpp::get_logger("NanobotDiffDriveHardware"),
+    //     "read pos: %f %f",
+    //     left_wheel_.pos,
+    //     right_wheel_.pos);
 
     return hardware_interface::return_type::OK;
   }

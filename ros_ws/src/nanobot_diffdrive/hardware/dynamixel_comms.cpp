@@ -65,7 +65,7 @@ std::string DynamixelComms::setupMotors(
     return "Failed to set velocity limit.";
   }
 
-  // Enable Torque of DYNAMIXEL
+  // Enable torque
   dxl_comm_result_ = packetHandler_->write1ByteTxRx(
       portHandler_.get(),
       BROADCAST_ID,
@@ -77,12 +77,22 @@ std::string DynamixelComms::setupMotors(
     return "Failed to enable torque.";
   }
 
+  // Reset position
+  dxl_comm_result_ = packetHandler_->clearMultiTurn(
+      portHandler_.get(),
+      BROADCAST_ID,
+      &dxl_error_);
+  if (dxl_comm_result_ != COMM_SUCCESS)
+  {
+    return "Failed to reset position.";
+  }
+
   return "";
 }
 
 std::string DynamixelComms::shutdownMotors()
 {
-  // Disable Torque of DYNAMIXEL
+  // Disable torque
   dxl_comm_result_ = packetHandler_->write1ByteTxRx(
       portHandler_.get(),
       BROADCAST_ID,
@@ -126,7 +136,7 @@ std::string DynamixelComms::write(int left_motor_value, int right_motor_value)
   return "";
 }
 
-std::string DynamixelComms::read(int &left_motor_value, int &right_motor_value)
+std::string DynamixelComms::read(int &left_vel_value, int &left_pos_value, int &right_vel_value, int &right_pos_value)
 {
   uint8_t dxl_error_ = 0;
 
@@ -134,14 +144,28 @@ std::string DynamixelComms::read(int &left_motor_value, int &right_motor_value)
       portHandler_.get(),
       left_motor_id_,
       ADDR_PRESENT_VELOCITY,
-      reinterpret_cast<uint32_t *>(&left_motor_value),
+      reinterpret_cast<uint32_t *>(&left_vel_value),
+      &dxl_error_);
+
+  dxl_comm_result_ = packetHandler_->read4ByteTxRx(
+      portHandler_.get(),
+      left_motor_id_,
+      ADDR_PRESENT_POSITION,
+      reinterpret_cast<uint32_t *>(&left_pos_value),
       &dxl_error_);
 
   dxl_comm_result_ = packetHandler_->read4ByteTxRx(
       portHandler_.get(),
       right_motor_id_,
       ADDR_PRESENT_VELOCITY,
-      reinterpret_cast<uint32_t *>(&right_motor_value),
+      reinterpret_cast<uint32_t *>(&right_vel_value),
+      &dxl_error_);
+
+  dxl_comm_result_ = packetHandler_->read4ByteTxRx(
+      portHandler_.get(),
+      right_motor_id_,
+      ADDR_PRESENT_POSITION,
+      reinterpret_cast<uint32_t *>(&right_pos_value),
       &dxl_error_);
 
   if (dxl_comm_result_ != COMM_SUCCESS)
