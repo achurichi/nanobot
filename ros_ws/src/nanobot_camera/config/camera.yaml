@@ -1,4 +1,7 @@
 /camera/realsense_camera:
   ros__parameters:
     pointcloud:
-      enable: false
+      enable: true
+      stream_filter: 2
+      allow_no_texture_points: false
+    
