@@ -30,25 +30,27 @@ RUN apt-get update && apt-get install -y \
   ros-$ROS_DISTRO-rmw-cyclonedds-cpp \
   ros-$ROS_DISTRO-demo-nodes-cpp \
   ros-$ROS_DISTRO-teleop-twist-keyboard \
+  ros-$ROS_DISTRO-joy \
+  ros-$ROS_DISTRO-teleop-twist-joy \
+  ros-$ROS_DISTRO-twist-mux \
+  # ros-$ROS_DISTRO-twist-stamper \
   ros-$ROS_DISTRO-xacro \
   ros-$ROS_DISTRO-ros2-control \
   ros-$ROS_DISTRO-ros2-controllers \
   ros-$ROS_DISTRO-imu-filter-madgwick \
-  ros-$ROS_DISTRO-diagnostic-updater \
+  ros-$ROS_DISTRO-slam-toolbox \
+  ros-$ROS_DISTRO-navigation2 \
+  ros-$ROS_DISTRO-nav2-bringup \
   ros-$ROS_DISTRO-nav2-util \
   ros-$ROS_DISTRO-nav2-msgs \
+  ros-$ROS_DISTRO-nav2-lifecycle-manager \
+  ros-$ROS_DISTRO-diagnostic-updater \
   ros-$ROS_DISTRO-bond \
   ros-$ROS_DISTRO-bondcpp \
   ros-$ROS_DISTRO-ament-cmake-clang-format \
-  ros-$ROS_DISTRO-nav2-lifecycle-manager \
-  ros-$ROS_DISTRO-slam-toolbox \
   ros-$ROS_DISTRO-image-transport-plugins \
   ros-$ROS_DISTRO-librealsense2* \
   ros-$ROS_DISTRO-realsense2* \
-  ros-$ROS_DISTRO-joy \
-  ros-$ROS_DISTRO-teleop-twist-joy \
-  # ros-$ROS_DISTRO-twist-stamper \
-  # ros-$ROS_DISTRO-twist-mux \
   ros-$ROS_DISTRO-rqt-graph \
   ros-$ROS_DISTRO-rqt-image-view \ 
   ros-$ROS_DISTRO-joint-state-publisher-gui \
