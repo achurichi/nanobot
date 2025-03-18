@@ -11,17 +11,20 @@ from launch_ros.actions import Node
 
 import xacro
 
+PACKAGE_NAME = "nanobot_bringup"
 CONTROLER_PACKAGE_NAME = "nanobot_diffdrive"
 DESCRIPTION_PACKAGE_NAME = "nanobot_description"
 LIDAR_PACKAGE_NAME = "nanobot_lidar"
 CAMERA_PACKAGE_NAME = "nanobot_camera"
 IMU_PACKAGE_NAME = "nanobot_imu"
+NAVIGATION_PACKAGE_NAME = "nanobot_navigation"
 
 
 def generate_launch_description():
     # get URDF via xacro
-    desc_pkg_path = os.path.join(get_package_share_directory(DESCRIPTION_PACKAGE_NAME))
-    xacro_file = os.path.join(desc_pkg_path, "urdf", "robot.urdf.xacro")
+    xacro_file = os.path.join(
+        os.path.join(get_package_share_directory(DESCRIPTION_PACKAGE_NAME)), "urdf", "robot.urdf.xacro"
+    )
     robot_description_config = xacro.process_file(xacro_file)
     robot_description = {"robot_description": robot_description_config.toxml()}
 
@@ -80,34 +83,51 @@ def generate_launch_description():
         )
     )
     
+    # Lidar    
+    lidar_launch_path = os.path.join(
+        get_package_share_directory(LIDAR_PACKAGE_NAME), "launch", "lidar.launch.py"
+    )
     lidar = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource(
-            [
-                os.path.join(
-                    get_package_share_directory(LIDAR_PACKAGE_NAME), "launch", "lidar.launch.py"
-                )
-            ]
-        ),
+        PythonLaunchDescriptionSource([lidar_launch_path]),
     )
     
+    # Camera
+    camera_launch_path = os.path.join(
+        get_package_share_directory(CAMERA_PACKAGE_NAME), "launch", "camera.launch.py"
+    )
     camera = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource(
-            [
-                os.path.join(
-                    get_package_share_directory(CAMERA_PACKAGE_NAME), "launch", "camera.launch.py"
-                )
-            ]
-        ),
+        PythonLaunchDescriptionSource([camera_launch_path]),
     )
     
+    # IMU
+    imu_launch_path = os.path.join(
+        get_package_share_directory(IMU_PACKAGE_NAME), "launch", "imu.launch.py"
+    )
     imu = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource(
-            [
-                os.path.join(
-                    get_package_share_directory(IMU_PACKAGE_NAME), "launch", "imu.launch.py"
-                )
-            ]
-        ),
+        PythonLaunchDescriptionSource([imu_launch_path]),
+    )
+    
+    # Navigation
+    navigation_launch_path = os.path.join(
+        get_package_share_directory(NAVIGATION_PACKAGE_NAME), "launch", "load_navigation.launch.py"
+    )
+    navigation = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource([navigation_launch_path]),
+        launch_arguments={
+            "map": "/home/nanobot/ros_ws/src/nanobot_navigation/maps/room.yaml",
+            "use_sim_time": "false",
+        }.items(),
+    )
+    
+    # Twist Mux
+    twist_mux_config_path = os.path.join(
+        os.path.join(get_package_share_directory(PACKAGE_NAME)), "config", "twist_mux.yaml"
+    )
+    twist_mux = Node(
+        package="twist_mux",
+        executable="twist_mux",
+        parameters=[twist_mux_config_path, {"use_sim_time": False}],
+        remappings=[("/cmd_vel_out", "/diff_controller/cmd_vel_unstamped")]
     )
 
     return LaunchDescription(
@@ -119,5 +139,7 @@ def generate_launch_description():
             lidar,
             camera,
             imu,
+            navigation,
+            twist_mux,
         ]
     )

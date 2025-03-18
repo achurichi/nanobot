@@ -10,9 +10,9 @@ PACKAGE_NAME = "nanobot_joystick"
 
 
 def generate_launch_description():
-    pkg_path = os.path.join(get_package_share_directory(PACKAGE_NAME))
-    joystick_config_path = os.path.join(pkg_path, "config", "joystick.yaml")
-    twist_mux_config_path = os.path.join(pkg_path, "config", "twist_mux.yaml")
+    joystick_config_path = os.path.join(
+        os.path.join(get_package_share_directory(PACKAGE_NAME)), "config", "joystick.yaml"
+    )
     
     joy_node = Node(
         package="joy",
@@ -28,16 +28,8 @@ def generate_launch_description():
         remappings=[("/cmd_vel", "/cmd_vel_joy")]
     )
     
-    twist_mux = Node(
-        package="twist_mux",
-        executable="twist_mux",
-        parameters=[twist_mux_config_path, {"use_sim_time": True}],
-        remappings=[("/cmd_vel_out", "/diff_controller/cmd_vel_unstamped")]
-    )
-    
     return LaunchDescription([
         joy_node,
         teleop_node,
-        twist_mux
     ])
 
