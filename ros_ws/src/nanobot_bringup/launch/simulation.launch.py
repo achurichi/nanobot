@@ -4,7 +4,8 @@ from ament_index_python.packages import get_package_share_directory
 
 
 from launch import LaunchDescription
-from launch.actions import IncludeLaunchDescription, ExecuteProcess
+from launch.actions import IncludeLaunchDescription, DeclareLaunchArgument
+from launch.substitutions import LaunchConfiguration
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 
 from launch_ros.actions import Node
@@ -16,6 +17,14 @@ NAVIGATION_PACKAGE_NAME = "nanobot_navigation"
 
 
 def generate_launch_description():
+    # Declare arguments
+    generate_map_arg = DeclareLaunchArgument(
+        "generate_map",
+        default_value="false",
+        description="Generate a new map using SLAM Toolbox"
+    )
+    generate_map = LaunchConfiguration("generate_map")
+    
     # Robot state publisher
     rsp_launch_file = os.path.join(
         get_package_share_directory(PACKAGE_NAME), "launch", "rsp.launch.py"
@@ -58,6 +67,7 @@ def generate_launch_description():
         arguments=["diff_controller"],
     )
 
+    # Joint broadcaster
     joint_broad_spawner = Node(
         package="controller_manager",
         executable="spawner",
@@ -85,11 +95,12 @@ def generate_launch_description():
     
     # Navigation
     navigation_launch_path = os.path.join(
-        get_package_share_directory(NAVIGATION_PACKAGE_NAME), "launch", "load_navigation.launch.py"
+        get_package_share_directory(NAVIGATION_PACKAGE_NAME), "launch", "navigation.launch.py"
     )
     navigation = IncludeLaunchDescription(
         PythonLaunchDescriptionSource([navigation_launch_path]),
         launch_arguments={
+            "generate_map": generate_map,
             "map": "/home/nanobot/ros_ws/src/nanobot_navigation/maps/boxes.yaml",
             "use_sim_time": "true",
         }.items(),
@@ -108,6 +119,7 @@ def generate_launch_description():
 
     return LaunchDescription(
         [
+            generate_map_arg,
             rsp,
             gazebo,
             spawn_entity,

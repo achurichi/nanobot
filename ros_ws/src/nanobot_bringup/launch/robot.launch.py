@@ -3,7 +3,8 @@ import os
 from ament_index_python.packages import get_package_share_directory
 
 from launch import LaunchDescription
-from launch.actions import RegisterEventHandler, IncludeLaunchDescription
+from launch.actions import RegisterEventHandler, IncludeLaunchDescription, DeclareLaunchArgument
+from launch.substitutions import LaunchConfiguration
 from launch.event_handlers import OnProcessExit
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 
@@ -21,6 +22,14 @@ NAVIGATION_PACKAGE_NAME = "nanobot_navigation"
 
 
 def generate_launch_description():
+    # Declare arguments
+    generate_map_arg = DeclareLaunchArgument(
+        "generate_map",
+        default_value="false",
+        description="Generate a new map using SLAM Toolbox"
+    )
+    generate_map = LaunchConfiguration("generate_map")
+    
     # get URDF via xacro
     xacro_file = os.path.join(
         os.path.join(get_package_share_directory(DESCRIPTION_PACKAGE_NAME)), "urdf", "robot.urdf.xacro"
@@ -109,11 +118,12 @@ def generate_launch_description():
     
     # Navigation
     navigation_launch_path = os.path.join(
-        get_package_share_directory(NAVIGATION_PACKAGE_NAME), "launch", "load_navigation.launch.py"
+        get_package_share_directory(NAVIGATION_PACKAGE_NAME), "launch", "navigation.launch.py"
     )
     navigation = IncludeLaunchDescription(
         PythonLaunchDescriptionSource([navigation_launch_path]),
         launch_arguments={
+            "generate_map": generate_map,
             "map": "/home/nanobot/ros_ws/src/nanobot_navigation/maps/room.yaml",
             "use_sim_time": "false",
         }.items(),
@@ -132,6 +142,7 @@ def generate_launch_description():
 
     return LaunchDescription(
         [
+            generate_map_arg,
             control_node,
             robot_state_pub_node,
             robot_controller_spawner,
