@@ -32,7 +32,7 @@ diff_controller:
     use_stamped_vel: false
 
     open_loop: true
-    enable_odom_tf: true
+    enable_odom_tf: false
 
     cmd_vel_timeout: 0.5
     # publish_limited_velocity: true

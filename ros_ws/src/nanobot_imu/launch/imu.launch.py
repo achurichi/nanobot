@@ -10,7 +10,6 @@ PACKAGE_NAME = "nanobot_imu"
 
 def generate_launch_description():
     pkg_path = os.path.join(get_package_share_directory(PACKAGE_NAME))
-    imu_config_path = os.path.join(pkg_path, "config", "imu.yaml")
     
     imu_raw_publisher = Node(
         package="nanobot_imu",
@@ -26,10 +25,19 @@ def generate_launch_description():
         package="imu_filter_madgwick",
         executable="imu_filter_madgwick_node",
         name="imu_filter",
-        parameters=[imu_config_path],
+        parameters=[os.path.join(pkg_path, "config", "imu.yaml")],
+    )
+    
+    ekf_localization = Node(
+        package='robot_localization',
+        executable='ekf_node',
+        name='ekf_filter_node',
+        output='screen',
+        parameters=[os.path.join(pkg_path, "config", "ekf.yaml")],
     )
     
     return LaunchDescription([
        imu_raw_publisher,
        imu_filter,
+       ekf_localization,
     ])
