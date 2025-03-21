@@ -1,7 +1,12 @@
 /camera/realsense_camera:
   ros__parameters:
+    rgb_camera:
+      color_profile: 640,480,15
+    depth_module:
+      depth_profile: 640,480,15
+      infra_profile: 640,480,15
     pointcloud:
       enable: true
-      stream_filter: 2
-      allow_no_texture_points: false
+      # stream_filter: 2
+      # allow_no_texture_points: false
     

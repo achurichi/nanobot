@@ -1,6 +1,6 @@
 ekf_filter_node:
   ros__parameters:
-    frequency: 50.0
+    frequency: 30.0
     two_d_mode: true
     
     # Diff drive odometry
