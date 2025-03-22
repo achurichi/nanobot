@@ -1,0 +1,42 @@
+.main {
+  width: 100vw;
+  height: 100dvh;
+  display: flex;
+  align-items: center;
+  justify-content: space-evenly;
+}
+
+.camera-container {
+  width: auto;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@media (orientation: portrait) {
+  .main {
+    flex-direction: column;
+  }
+  
+  .camera-container {
+    width: 100%;
+    height: auto;
+  }
+}
+
+.camera {
+  max-width: 100%;
+  max-height: 100%;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+}
+
+.joystick-container {
+  padding: 3rem;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
