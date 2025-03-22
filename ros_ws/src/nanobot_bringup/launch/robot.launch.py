@@ -19,6 +19,7 @@ LIDAR_PACKAGE_NAME = "nanobot_lidar"
 CAMERA_PACKAGE_NAME = "nanobot_camera"
 IMU_PACKAGE_NAME = "nanobot_imu"
 NAVIGATION_PACKAGE_NAME = "nanobot_navigation"
+WEB_PACKAGE_NAME = "nanobot_web"
 
 
 def generate_launch_description():
@@ -140,6 +141,14 @@ def generate_launch_description():
         remappings=[("/cmd_vel_out", "/diff_controller/cmd_vel_unstamped")]
     )
 
+    # Websocket connection
+    web_launch_path = os.path.join(
+        get_package_share_directory(WEB_PACKAGE_NAME), "launch", "web.launch.py"
+    )
+    web = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource([web_launch_path])
+    )
+
     return LaunchDescription(
         [
             generate_map_arg,
@@ -152,5 +161,6 @@ def generate_launch_description():
             imu,
             navigation,
             twist_mux,
+            web,
         ]
     )

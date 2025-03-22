@@ -3,6 +3,7 @@ FROM ros:humble-ros-base
 ARG USERNAME=nano
 ARG USER_UID=1000
 ARG USER_GID=$USER_UID
+ARG NODE_VERSION=22.14
 
 # Delete user if it exists in container (e.g Ubuntu Noble: ubuntu)
 RUN if id -u $USER_UID ; then userdel `id -un $USER_UID` ; fi
@@ -22,6 +23,7 @@ ENV SHELL /bin/bash
 
 # Install additional ROS packages and necessary tools
 RUN apt-get update && apt-get install -y \
+  curl \
   udev \
   libudev-dev \
   kmod \
@@ -34,6 +36,7 @@ RUN apt-get update && apt-get install -y \
   ros-$ROS_DISTRO-teleop-twist-joy \
   ros-$ROS_DISTRO-twist-mux \
   # ros-$ROS_DISTRO-twist-stamper \
+  ros-$ROS_DISTRO-rosbridge-server \
   ros-$ROS_DISTRO-xacro \
   ros-$ROS_DISTRO-ros2-control \
   ros-$ROS_DISTRO-ros2-controllers \
@@ -71,7 +74,10 @@ USER $USERNAME
 RUN echo "source /opt/ros/$ROS_DISTRO/setup.bash" >> /home/$USERNAME/.bashrc
 RUN echo "export RMW_IMPLEMENTATION=rmw_cyclonedds_cpp" >> /home/$USERNAME/.bashrc
 # RUN echo "export CYCLONEDDS_URI=/home/nanobot/ros_ws/cyclonedds_profile.xml" >> /home/$USERNAME/.bashrc
-
 RUN rosdep update
+
+# Setup node
+RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.2/install.sh | bash
+RUN bash -c "source ~/.nvm/nvm.sh && nvm install ${NODE_VERSION}"
 
 CMD ["/bin/bash"]

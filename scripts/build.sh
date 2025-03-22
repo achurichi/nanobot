@@ -27,3 +27,7 @@ if [ "$1" == "sim" ]; then
 else
     colcon build --symlink-install
 fi
+
+# Install web app
+cd "/home/nanobot/web_app"
+npm install

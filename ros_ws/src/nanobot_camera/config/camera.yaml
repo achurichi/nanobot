@@ -6,7 +6,7 @@
       depth_profile: 640,480,15
       infra_profile: 640,480,15
     pointcloud:
-      enable: true
+      enable: false
       # stream_filter: 2
       # allow_no_texture_points: false
     
