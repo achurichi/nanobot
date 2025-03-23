@@ -1,12 +1,11 @@
 #!/bin/bash
 
 cd "/home/nanobot/ros_ws"
-
 source install/setup.bash
 
-# Run control launch file
-ros2 launch nanobot_bringup control.launch.py
-# ros2 launch nanobot_bringup control.launch.py & 
+# Launch monitor
+ros2 launch nanobot_bringup monitor.launch.py
+# ros2 launch nanobot_bringup monitor.launch.py &
 # pid1=$!
 
 # Run the teleop_twist_keyboard node
