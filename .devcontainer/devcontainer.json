@@ -45,7 +45,8 @@
   "mounts": [
     "source=/lib/modules/4.9.337-tegra,target=/lib/modules/4.9.337-tegra,type=bind",
     "source=/dev/serial/by-id,target=/dev/serial/by-id,type=bind",
-    "source=/dev/input,target=/dev/input,type=bind"
+    "source=/dev/input,target=/dev/input,type=bind",
+    "source=/var/run/docker.sock,target=/var/run/docker.sock,type=bind"
   ]
 
   // Local Development

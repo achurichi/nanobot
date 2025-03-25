@@ -3,9 +3,14 @@ import os
 from ament_index_python.packages import get_package_share_directory
 
 from launch import LaunchDescription
-from launch.actions import RegisterEventHandler, IncludeLaunchDescription, DeclareLaunchArgument
+from launch.actions import (
+    RegisterEventHandler,
+    IncludeLaunchDescription,
+    DeclareLaunchArgument,
+)
 from launch.substitutions import LaunchConfiguration
 from launch.event_handlers import OnProcessExit
+from launch.conditions import IfCondition
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 
 from launch_ros.actions import Node
@@ -27,13 +32,22 @@ def generate_launch_description():
     generate_map_arg = DeclareLaunchArgument(
         "generate_map",
         default_value="false",
-        description="Generate a new map using SLAM Toolbox"
+        description="Generate a new map using SLAM Toolbox",
     )
     generate_map = LaunchConfiguration("generate_map")
-    
+
+    use_camera_arg = DeclareLaunchArgument(
+        "use_camera",
+        default_value="true",
+        description="Whether to start the camera node",
+    )
+    use_camera = LaunchConfiguration("use_camera")
+
     # get URDF via xacro
     xacro_file = os.path.join(
-        os.path.join(get_package_share_directory(DESCRIPTION_PACKAGE_NAME)), "urdf", "robot.urdf.xacro"
+        os.path.join(get_package_share_directory(DESCRIPTION_PACKAGE_NAME)),
+        "urdf",
+        "robot.urdf.xacro",
     )
     robot_description_config = xacro.process_file(xacro_file)
     robot_description = {"robot_description": robot_description_config.toxml()}
@@ -56,7 +70,7 @@ def generate_launch_description():
             ("/diff_controller/cmd_vel", "/cmd_vel"),
         ],
     )
-    
+
     robot_state_pub_node = Node(
         package="robot_state_publisher",
         executable="robot_state_publisher",
@@ -92,23 +106,24 @@ def generate_launch_description():
             on_exit=[joint_state_broadcaster_spawner],
         )
     )
-    
-    # Lidar    
+
+    # Lidar
     lidar_launch_path = os.path.join(
         get_package_share_directory(LIDAR_PACKAGE_NAME), "launch", "lidar.launch.py"
     )
     lidar = IncludeLaunchDescription(
         PythonLaunchDescriptionSource([lidar_launch_path]),
     )
-    
+
     # Camera
     camera_launch_path = os.path.join(
         get_package_share_directory(CAMERA_PACKAGE_NAME), "launch", "camera.launch.py"
     )
     camera = IncludeLaunchDescription(
         PythonLaunchDescriptionSource([camera_launch_path]),
+        condition=IfCondition(use_camera),
     )
-    
+
     # IMU
     imu_launch_path = os.path.join(
         get_package_share_directory(IMU_PACKAGE_NAME), "launch", "imu.launch.py"
@@ -116,10 +131,12 @@ def generate_launch_description():
     imu = IncludeLaunchDescription(
         PythonLaunchDescriptionSource([imu_launch_path]),
     )
-    
+
     # Navigation
     navigation_launch_path = os.path.join(
-        get_package_share_directory(NAVIGATION_PACKAGE_NAME), "launch", "navigation.launch.py"
+        get_package_share_directory(NAVIGATION_PACKAGE_NAME),
+        "launch",
+        "navigation.launch.py",
     )
     navigation = IncludeLaunchDescription(
         PythonLaunchDescriptionSource([navigation_launch_path]),
@@ -129,29 +146,30 @@ def generate_launch_description():
             "use_sim_time": "false",
         }.items(),
     )
-    
+
     # Twist Mux
     twist_mux_config_path = os.path.join(
-        os.path.join(get_package_share_directory(PACKAGE_NAME)), "config", "twist_mux.yaml"
+        os.path.join(get_package_share_directory(PACKAGE_NAME)),
+        "config",
+        "twist_mux.yaml",
     )
     twist_mux = Node(
         package="twist_mux",
         executable="twist_mux",
         parameters=[twist_mux_config_path, {"use_sim_time": False}],
-        remappings=[("/cmd_vel_out", "/diff_controller/cmd_vel_unstamped")]
+        remappings=[("/cmd_vel_out", "/diff_controller/cmd_vel_unstamped")],
     )
 
     # Websocket connection
     web_launch_path = os.path.join(
         get_package_share_directory(WEB_PACKAGE_NAME), "launch", "web.launch.py"
     )
-    web = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource([web_launch_path])
-    )
+    web = IncludeLaunchDescription(PythonLaunchDescriptionSource([web_launch_path]))
 
     return LaunchDescription(
         [
             generate_map_arg,
+            use_camera_arg,
             control_node,
             robot_state_pub_node,
             robot_controller_spawner,

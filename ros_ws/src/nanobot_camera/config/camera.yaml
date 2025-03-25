@@ -1,4 +1,4 @@
-/camera/realsense_camera:
+/camera:
   ros__parameters:
     rgb_camera:
       color_profile: 640,480,15
@@ -9,4 +9,3 @@
       enable: false
       # stream_filter: 2
       # allow_no_texture_points: false
-    

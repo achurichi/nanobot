@@ -1,0 +1,24 @@
+camera:
+  camera:
+    ros__parameters:
+      base_frame_id: camera_link
+      initial_reset: true
+      tf_publish_rate: 10.0
+
+      enable_color: true
+      color_fps: 30.0
+      color_height: 480
+      color_width: 640
+
+      enable_depth: true
+      depth_fps: 30.0
+      depth_height: 480
+      depth_width: 640
+
+      enable_infra: true
+      infra_fps: 30.0
+      infra_height: 480
+      infra_width: 640
+
+      enable_pointcloud: true
+      filters: pointcloud,decimation # hole_filling

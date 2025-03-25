@@ -10,13 +10,13 @@ RUN if id -u $USER_UID ; then userdel `id -un $USER_UID` ; fi
 
 # Create the user
 RUN groupadd --gid $USER_GID $USERNAME \
-    && useradd --uid $USER_UID --gid $USER_GID -m $USERNAME \
-    #
-    # [Optional] Add sudo support. Omit if you don't need to install software after connecting.
-    && apt-get update \
-    && apt-get install -y sudo \
-    && echo $USERNAME ALL=\(root\) NOPASSWD:ALL > /etc/sudoers.d/$USERNAME \
-    && chmod 0440 /etc/sudoers.d/$USERNAME
+  && useradd --uid $USER_UID --gid $USER_GID -m $USERNAME \
+  #
+  # [Optional] Add sudo support. Omit if you don't need to install software after connecting.
+  && apt-get update \
+  && apt-get install -y sudo \
+  && echo $USERNAME ALL=\(root\) NOPASSWD:ALL > /etc/sudoers.d/$USERNAME \
+  && chmod 0440 /etc/sudoers.d/$USERNAME
 RUN apt-get update && apt-get upgrade -y
 RUN apt-get install -y python3-pip
 ENV SHELL /bin/bash
@@ -24,6 +24,7 @@ ENV SHELL /bin/bash
 # Install additional ROS packages and necessary tools
 RUN apt-get update && apt-get install -y \
   curl \
+  ca-certificates \
   udev \
   libudev-dev \
   kmod \
@@ -61,6 +62,17 @@ RUN apt-get update && apt-get install -y \
   ros-$ROS_DISTRO-rviz2 \
   ros-$ROS_DISTRO-ros-gz \
   ros-$ROS_DISTRO-ign-ros2-control
+
+# Install Docker
+RUN apt-get update \
+  && install -m 0755 -d /etc/apt/keyrings \
+  && curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc \
+  && chmod a+r /etc/apt/keyrings/docker.asc
+RUN echo \
+  "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu \
+  $(. /etc/os-release && echo "${UBUNTU_CODENAME:-$VERSION_CODENAME}") stable" | \
+  tee /etc/apt/sources.list.d/docker.list > /dev/null
+RUN apt-get update && apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
 
 # Install tools for IMU calibration
 RUN pip install mpu9250-jmdev smbus2

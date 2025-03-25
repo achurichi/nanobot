@@ -33,7 +33,7 @@ def generate_launch_description():
     rqt_image_view = Node(
         package="rqt_image_view",
         executable="rqt_image_view",
-        arguments=["/camera/realsense_camera/color/image_raw/compressed"],
+        arguments=["/camera/color/image_raw/compressed"],
         output="screen",
     )
 
