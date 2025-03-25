@@ -10,7 +10,6 @@ from launch.actions import (
 )
 from launch.substitutions import LaunchConfiguration
 from launch.event_handlers import OnProcessExit
-from launch.conditions import IfCondition
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 
 from launch_ros.actions import Node
@@ -36,12 +35,12 @@ def generate_launch_description():
     )
     generate_map = LaunchConfiguration("generate_map")
 
-    use_camera_arg = DeclareLaunchArgument(
-        "use_camera",
+    gpu_camera_arg = DeclareLaunchArgument(
+        "gpu_camera",
         default_value="true",
-        description="Whether to start the camera node",
+        description="Whether to use the camera with GPU acceleration",
     )
-    use_camera = LaunchConfiguration("use_camera")
+    gpu_camera = LaunchConfiguration("gpu_camera")
 
     # get URDF via xacro
     xacro_file = os.path.join(
@@ -121,7 +120,9 @@ def generate_launch_description():
     )
     camera = IncludeLaunchDescription(
         PythonLaunchDescriptionSource([camera_launch_path]),
-        condition=IfCondition(use_camera),
+        launch_arguments={
+            "gpu_camera": gpu_camera,
+        }.items(),
     )
 
     # IMU
@@ -169,7 +170,7 @@ def generate_launch_description():
     return LaunchDescription(
         [
             generate_map_arg,
-            use_camera_arg,
+            gpu_camera_arg,
             control_node,
             robot_state_pub_node,
             robot_controller_spawner,
