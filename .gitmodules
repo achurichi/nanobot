@@ -1,0 +1,3 @@
+[submodule "ros_ws/src/nanobot_imu/sh2"]
+	path = ros_ws/src/nanobot_imu/sh2
+	url = https://github.com/ceva-dsp/sh2.git
