@@ -5,13 +5,13 @@
   <!-- IMU specs -->
   <xacro:property name="imu_z_dim" value="0.002" />
   <xacro:property name="imu_body_z_offset" value="0.004" />
-  
+
   <!-- Links and joints definition -->
 
   <joint name="imu_base_joint" type="fixed">
     <parent link="base_link" />
     <child link="imu_base_link" />
-    <origin xyz="0 0 ${body_z_dim - body_z_offset - imu_body_z_offset - imu_z_dim}" rpy="0 0 0" />
+    <origin xyz="0 0 ${body_z_dim - body_z_offset - imu_body_z_offset - imu_z_dim}" rpy="0 0 ${pi/2}" />
   </joint>
 
   <link name="imu_base_link" />

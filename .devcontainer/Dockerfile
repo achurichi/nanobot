@@ -23,13 +23,14 @@ ENV SHELL /bin/bash
 
 # Install additional ROS packages and necessary tools
 RUN apt-get update && apt-get install -y \
-  curl \
   ca-certificates \
-  udev \
-  libudev-dev \
-  kmod \
-  openssh-client \
+  curl \
   joystick \
+  kmod \
+  libi2c-dev \
+  libudev-dev \
+  openssh-client \
+  udev \
   ros-$ROS_DISTRO-rmw-cyclonedds-cpp \
   ros-$ROS_DISTRO-demo-nodes-cpp \
   ros-$ROS_DISTRO-teleop-twist-keyboard \
@@ -77,7 +78,7 @@ RUN apt-get update && apt-get install -y docker-ce docker-ce-cli containerd.io d
 # Install tools for IMU calibration
 RUN pip install mpu9250-jmdev smbus2
 
-# Add user to 'dialout' and 'video' groups
+# Add user to the necessary groups
 RUN adduser $USERNAME dialout && adduser $USERNAME video
 
 USER $USERNAME

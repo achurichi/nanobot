@@ -5,7 +5,7 @@
 #include <sensor_msgs/msg/imu.hpp>
 #include <sensor_msgs/msg/magnetic_field.hpp>
 
-#include <nanobot_imu/MPU9250Driver.hpp>
+#include <nanobot_imu/BNO085.hpp>
 
 namespace nanobot_imu
 {
@@ -16,13 +16,20 @@ namespace nanobot_imu
     ~ImuNode();
 
   private:
+    void setup_reports(double read_freq);
+
+    void read_data();
     void publish_data();
 
-    rclcpp::Publisher<sensor_msgs::msg::Imu>::SharedPtr imu_publisher_;
-    rclcpp::Publisher<sensor_msgs::msg::MagneticField>::SharedPtr mag_publisher_;
-    rclcpp::TimerBase::SharedPtr timer_;
+    rclcpp::Publisher<sensor_msgs::msg::Imu>::SharedPtr _imu_publisher;
+    rclcpp::Publisher<sensor_msgs::msg::MagneticField>::SharedPtr _mag_publisher;
+    rclcpp::TimerBase::SharedPtr _publish_timer;
+    rclcpp::TimerBase::SharedPtr _read_timer;
 
-    MPU9250Driver mpu9250_driver_;
+    std::unique_ptr<BNO085> _bno085;
+
+    sensor_msgs::msg::Imu _imu_msg;
+    sensor_msgs::msg::MagneticField _mag_msg;
   };
 } // namespace nanobot_imu
 

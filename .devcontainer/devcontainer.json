@@ -41,7 +41,15 @@
   "postCreateCommand": "sudo chown -R $(whoami) /home/nanobot/",
 
   // Jetson Nano Development
-  "runArgs": ["--net=host", "--pid=host", "--ipc=host", "--device=/dev/serial/by-id/", "--runtime=nvidia"],
+  "runArgs": [
+    "--net=host",
+    "--pid=host",
+    "--ipc=host",
+    "--device=/dev/serial/by-id/",
+    "--device=/dev/i2c-0",
+    "--device=/dev/i2c-1",
+    "--runtime=nvidia"
+  ],
   "mounts": [
     "source=/lib/modules/4.9.337-tegra,target=/lib/modules/4.9.337-tegra,type=bind",
     "source=/dev/serial/by-id,target=/dev/serial/by-id,type=bind",

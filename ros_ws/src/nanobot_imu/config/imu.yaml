@@ -1,8 +1,7 @@
-/imu_filter:
+/nanobot_imu:
   ros__parameters:
-    fixed_frame: "imu_base_link"
-    world_frame: "enu"
-    use_mag: false
-    # mag_bias_x: 4.081677922771673e-05
-    # mag_bias_y: 5.844807692307692e-05
-    # mag_bias_z: -6.847992979242978e-05
+    device: /dev/i2c-0
+    address: 75 # 0x4B in decimal
+    read_freq: 50.0
+    publish_freq: 30.0
+    frame_id: imu_link

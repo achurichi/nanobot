@@ -2,9 +2,10 @@ ekf_filter_node:
   ros__parameters:
     frequency: 30.0
     two_d_mode: true
-    
+
     # Diff drive odometry
     odom0: /diff_controller/odom
+    # prettier-ignore
     odom0_config: [
       false, false, false,
       false, false, false,
@@ -12,24 +13,23 @@ ekf_filter_node:
       false, false, true,
       false, false, false
     ]
-    odom0_queue_size: 5
     odom0_differential: false
     odom0_relative: false
     odom0_pose_use_child_frame: false
-    
+    odom0_queue_size: 5
+
     # IMU sensor
-    imu0: /imu/data
-    imu0_config: [
-        false, false, false,
-        false, false, true,
-        false, false, false,
-        false, false, true,
-        false, false, false # true, false, false (to track x acceleration)
-    ]
-    imu0_differential: true
-    imu0_pose_use_child_frame: true
-    imu0_relative: false
-    imu0_queue_size: 5
-    imu0_pose_rejection_threshold: 0.8
-    imu0_twist_rejection_threshold: 0.8
-    imu0_linear_acceleration_rejection_threshold: 0.8
+    # imu0: /imu/data
+    # # prettier-ignore
+    # imu0_config: [
+    #     false, false, false,
+    #     false, false, true,
+    #     false, false, false,
+    #     false, false, true,
+    #     false, false, false # true, false, false (to track x acceleration)
+    # ]
+    # imu0_differential: true
+    # imu0_relative: true
+    # imu0_pose_use_child_frame: true
+    # imu0_queue_size: 5
+    # imu0_remove_gravitational_acceleration: false

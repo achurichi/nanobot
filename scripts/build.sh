@@ -17,13 +17,6 @@ vcs import src <third_party.repos
 cd src/third_party/ldrobot_lidar/scripts
 ./create_udev_rules.sh
 
-if [ "$SIM_MODE" == "false" ]; then
-  # Install jetgpio library
-  cd "../../jetgpio"
-  sudo make
-  sudo make install
-fi
-
 # Install dependencies
 cd "/home/nanobot/ros_ws"
 sudo apt-get update

@@ -15,16 +15,25 @@ set(dependencies
   sensor_msgs
 )
 
-include_directories(include)
+include_directories(include sh2)
+
+add_library(sh2 STATIC
+  sh2/sh2_SensorValue.c
+  sh2/sh2_util.c
+  sh2/sh2.c
+  sh2/shtp.c
+)
+
+target_compile_options(sh2 PRIVATE -w)
 
 add_executable(imu
-  src/nanobot_imu/MPU9250Driver.cpp
+  src/nanobot_imu/BNO085.cpp
   src/nanobot_imu/ImuNode.cpp
   src/imu_main.cpp
 )
 ament_target_dependencies(imu ${dependencies})
 
-target_link_libraries(imu jetgpio)
+target_link_libraries(imu sh2)
 
 install(TARGETS
   imu
