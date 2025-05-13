@@ -92,3 +92,83 @@ Type=idle
 Replace `<user-name>` with your actual username.
 
 Finally, reboot the system to apply the changes.
+
+## Remote Development
+
+Since the Jetson Nano runs an older version of Ubuntu (18.04), the latest versions of VS Code are not compatible due to dependencies like glibc and libstdc++. As a result, you can’t directly use the Remote Development extension from VS Code to work on the Nano. Instead, SSH and file synchronization are used to manage remote development.
+
+Start by creating a virtual environment in the root directory of the project:
+
+```bash
+python3 -m venv .venv
+```
+
+Activate the virtual environment:
+
+```bash
+source .venv/bin/activate
+```
+
+Install watchdog to monitor file changes:
+
+```bash
+pip3 install watchdog
+```
+
+`watchmedo` can be used to sync changes from the local project to the Jetson Nano. The following command watches for file changes and uses rsync to update the remote files:
+
+```bash
+watchmedo shell-command \
+ --drop \
+ --patterns="\*" \
+ --recursive \
+ --command='rsync -avz ~/repos/nanobot/ nano@192.168.1.208:/home/nano/repos/nanobot/' \
+ ~/repos/nanobot/
+```
+
+To avoid entering the password every time a change is made, SSH key-based authentication should be set up. First, generate a key pair if you don't have one:
+
+```bash
+ssh-keygen
+```
+
+Then, copy the public key to the Jetson Nano:
+
+```bash
+ssh-copy-id nano@192.168.1.208
+```
+
+After this, SSH access can be gained to the Nano without needing to enter the password each time.
+
+```bash
+docker build -t nanobot-dev-image \
+ --build-arg USERNAME=nano \
+ -f .devcontainer/Dockerfile .
+```
+
+```bash
+docker run -dit \
+ --name nanobot-dev \
+ --privileged \
+ --network host \
+ --pid host \
+ --ipc host \
+ -e NVIDIA_VISIBLE_DEVICES=all \
+ -e NVIDIA_DRIVER_CAPABILITIES=all \
+ -u nano \
+ -w /home/nanobot \
+ -v "$(pwd)":/home/nanobot \
+ -v /dev/serial/by-id:/dev/serial/by-id \
+ -v /dev/input:/dev/input \
+ -v /dev/i2c-0:/dev/i2c-0 \
+ -v /dev/i2c-1:/dev/i2c-1 \
+ -v /lib/modules/4.9.337-tegra:/lib/modules/4.9.337-tegra \
+ -v /var/run/docker.sock:/var/run/docker.sock \
+ --runtime=nvidia \
+ nanobot-dev-image \
+ bash
+```
+
+```bash
+docker exec -it nanobot-dev /bin/bash
+```
