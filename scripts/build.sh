@@ -34,5 +34,7 @@ cd "/home/nanobot/web_app"
 npm install
 
 # Build the container for the RealSense camera with GPU
-cd "/home/nanobot/ros_ws/src/nanobot_camera/docker"
-sudo docker build -f Dockerfile -t realsense_camera .
+if [ "$SIM_MODE" == "false" ]; then
+  cd "/home/nanobot/ros_ws/src/nanobot_camera/docker"
+  sudo docker build -f Dockerfile -t realsense_camera .
+fi

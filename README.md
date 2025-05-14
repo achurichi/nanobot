@@ -19,7 +19,7 @@ The `scripts` folder contains useful scripts to manage the project:
 - **`build.sh`**: Builds everything needed to run the real robot or the simulation (if run with the `sim` parameter).
 - **`clean.sh`**: Removes the files generated during the build process.
 - **`start.sh`**: Starts the robot or the simulation (if run with the `sim` parameter).
-- **`monitor.sh`**: Runs rviz and rqt_image_view.
+- **`monitor.sh`**: Runs rviz and rqt_image_view (call with `sim` parameter if running the simulation).
 - **`magnetometer_calibration.py`**: Run it to get the calibration values for the magnetometer. Then update the values in `/ros_ws/src/nanobot_imu/config/imu.yaml`.
 
 ## Controlling the Robot
@@ -135,7 +135,7 @@ ssh-keygen
 Then, copy the public key to the Jetson Nano:
 
 ```bash
-ssh-copy-id nano@192.168.1.208
+ssh-copy-id nano@<jetson-nano-ip>
 ```
 
 After this, SSH access can be gained to the Nano without needing to enter the password each time.
