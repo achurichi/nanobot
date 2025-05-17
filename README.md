@@ -46,6 +46,8 @@ You can control the robot in three different ways:
 - **Using a Joystick**  
    If you have a joystick connected via USB, the robot can be controlled directly through it.
 
+  To use the Steam Deck joystick, enable gamepad mode by long-pressing the button with three dashes (≡). You can verify that the joystick is recognized by using the evtest tool.
+
 - **Using the Web App**
   You can control the robot through a web interface. Open a browser and navigate to:  
    `http://<jetson-nano-ip>:5173`

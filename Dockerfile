@@ -63,6 +63,7 @@ RUN apt-get update && apt-get install -y \
   ros-$ROS_DISTRO-rviz2 \
   ros-$ROS_DISTRO-ros-gz \
   ros-$ROS_DISTRO-ign-ros2-control
+# steam-devices
 
 # Install Docker
 RUN apt-get update \
