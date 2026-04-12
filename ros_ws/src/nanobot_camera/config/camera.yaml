@@ -1,11 +1,19 @@
-/camera:
+camera:
   ros__parameters:
-    rgb_camera:
-      color_profile: 640,480,15
-    depth_module:
-      depth_profile: 640,480,15
-      infra_profile: 640,480,15
-    pointcloud:
-      enable: false
-      # stream_filter: 2
-      # allow_no_texture_points: false
+    camera_name: "camera"
+    base_frame_id: "link"
+    initial_reset: true
+
+    enable_color: true
+    rgb_camera.color_profile: "640x480x30"
+    enable_depth: true
+    depth_module.depth_profile: "640x480x30"
+    enable_infra1: false
+    enable_infra2: false
+
+    pointcloud.enable: true
+    pointcloud.stream_filter: 2 # Color Stream
+    align_depth.enable: true
+
+    decimation_filter.enable: true
+    decimation_filter.filter_magnitude: 4

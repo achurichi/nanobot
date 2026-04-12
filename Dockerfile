@@ -1,97 +1,61 @@
-FROM ros:humble-ros-base
+FROM dustynv/ros:humble-ros-base-l4t-r36.3.0
 
-ARG USERNAME=nano
-ARG USER_UID=1000
-ARG USER_GID=$USER_UID
-ARG NODE_VERSION=22.14
+# 2. Fix ROS 2 GPG keys and Install System Dependencies
+RUN apt-get update || true && \
+    apt-get install -y curl gnupg && \
+    curl -sSL https://raw.githubusercontent.com/ros/rosdistro/master/ros.key -o /usr/share/keyrings/ros-archive-keyring.gpg && \
+    echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/ros-archive-keyring.gpg] http://packages.ros.org/ros2/ubuntu $(. /etc/os-release && echo $UBUNTU_CODENAME) main" > /etc/apt/sources.list.d/ros2.list && \
+    apt-get update && apt-get install -y \
+    git cmake libssl-dev libusb-1.0-0-dev pkg-config libgtk-3-dev usbutils libcap-dev libspnav-dev libbluetooth-dev libcwiid-dev libexpected-dev \
+    openssh-server python3-pip python3-typeguard python3-jinja2 nano build-essential rapidjson-dev nlohmann-json3-dev libwebsocketpp-dev && \
+    # SSH Configuration: Port 2222 to avoid conflict with Jetson Host
+    mkdir /var/run/sshd && echo 'root:root' | chpasswd && \
+    sed -i 's/#PermitRootLogin prohibit-password/PermitRootLogin yes/' /etc/ssh/sshd_config && \
+    sed -i 's/#Port 22/Port 2222/' /etc/ssh/sshd_config && \
+    rm -rf /var/lib/apt/lists/*
 
-# Delete user if it exists in container (e.g Ubuntu Noble: ubuntu)
-RUN if id -u $USER_UID ; then userdel `id -un $USER_UID` ; fi
+# 3. Build LibRealSense v2.57.7
+WORKDIR /opt
+RUN git clone --depth=1 --branch v2.57.7 https://github.com/realsenseai/librealsense.git && \
+    cd librealsense && mkdir build && cd build && \
+    cmake .. -DFORCE_RSUSB_BACKEND=ON -DBUILD_WITH_CUDA=true -DCMAKE_BUILD_TYPE=Release -DBUILD_EXAMPLES=false && \
+    make -j$(nproc) && make install && ldconfig && \
+    rm -rf /opt/librealsense/build
 
-# Create the user
-RUN groupadd --gid $USER_GID $USERNAME \
-  && useradd --uid $USER_UID --gid $USER_GID -m $USERNAME \
-  #
-  # [Optional] Add sudo support. Omit if you don't need to install software after connecting.
-  && apt-get update \
-  && apt-get install -y sudo \
-  && echo $USERNAME ALL=\(root\) NOPASSWD:ALL > /etc/sudoers.d/$USERNAME \
-  && chmod 0440 /etc/sudoers.d/$USERNAME
-RUN apt-get update && apt-get upgrade -y
-RUN apt-get install -y python3-pip
-ENV SHELL /bin/bash
+# 5. Install ROS dependencies
+WORKDIR /root/ros_ws/src/dependencies
+RUN git clone https://github.com/realsenseai/realsense-ros.git -b ros2-development && \
+    git clone https://github.com/ros/diagnostics.git -b ros2-humble && \
+    # Delete the buggy modules not needed
+    rm -rf diagnostics/diagnostic_remote_logging diagnostics/diagnostic_aggregator && \
+    git clone https://github.com/ros-perception/image_common.git -b humble && \
+    git clone https://github.com/ros-perception/vision_opencv.git -b humble && \
+    # git clone https://github.com/ros2/demos.git -b humble && \
+    # git clone https://github.com/ros2/teleop_twist_keyboard.git -b humble && \
+    git clone https://github.com/ros-drivers/joystick_drivers.git -b ros2 && \
+    git clone https://github.com/ros2/teleop_twist_joy.git -b humble && \
+    git clone https://github.com/ros-teleop/twist_mux.git -b humble && \
+    git clone https://github.com/ros/xacro.git -b ros2 && \
+    git clone https://github.com/ros/filters.git -b ros2 && \
+    git clone https://github.com/PickNikRobotics/generate_parameter_library.git -b humble && \
+    git clone https://github.com/PickNikRobotics/cpp_polyfills.git -b humble && \
+    git clone https://github.com/PickNikRobotics/RSL.git && \
+    git clone https://github.com/pal-robotics/backward_ros.git -b foxy-devel && \
+    git clone https://github.com/ros-controls/realtime_tools.git -b humble && \
+    git clone https://github.com/ros-controls/control_toolbox.git -b humble && \
+    git clone https://github.com/ros-controls/control_msgs.git -b humble && \
+    git clone https://github.com/ros-controls/ros2_control.git -b humble && \
+    git clone https://github.com/ros-controls/ros2_controllers.git -b humble && \
+    git clone https://github.com/ROBOTIS-GIT/DynamixelSDK.git -b humble && \
+    git clone https://github.com/facontidavide/rosx_introspection.git -b 2.0.0 && \
+    git clone https://github.com/foxglove/foxglove-sdk.git -b sdk/v0.17.1 && \
+    git clone https://github.com/ros/resource_retriever.git -b humble
 
-# Install additional ROS packages and necessary tools
-RUN apt-get update && apt-get install -y \
-  ca-certificates \
-  curl \
-  joystick \
-  kmod \
-  libi2c-dev \
-  libudev-dev \
-  openssh-client \
-  udev \
-  ros-$ROS_DISTRO-rmw-cyclonedds-cpp \
-  ros-$ROS_DISTRO-demo-nodes-cpp \
-  ros-$ROS_DISTRO-teleop-twist-keyboard \
-  ros-$ROS_DISTRO-joy \
-  ros-$ROS_DISTRO-teleop-twist-joy \
-  ros-$ROS_DISTRO-twist-mux \
-  # ros-$ROS_DISTRO-twist-stamper \
-  ros-$ROS_DISTRO-rosbridge-server \
-  ros-$ROS_DISTRO-xacro \
-  ros-$ROS_DISTRO-ros2-control \
-  ros-$ROS_DISTRO-ros2-controllers \
-  ros-$ROS_DISTRO-imu-filter-madgwick \
-  ros-$ROS_DISTRO-robot-localization \
-  ros-$ROS_DISTRO-slam-toolbox \
-  ros-$ROS_DISTRO-navigation2 \
-  ros-$ROS_DISTRO-nav2-bringup \
-  ros-$ROS_DISTRO-nav2-util \
-  ros-$ROS_DISTRO-nav2-msgs \
-  ros-$ROS_DISTRO-nav2-lifecycle-manager \
-  ros-$ROS_DISTRO-diagnostic-updater \
-  ros-$ROS_DISTRO-bond \
-  ros-$ROS_DISTRO-bondcpp \
-  ros-$ROS_DISTRO-ament-cmake-clang-format \
-  ros-$ROS_DISTRO-image-transport-plugins \
-  ros-$ROS_DISTRO-librealsense2* \
-  ros-$ROS_DISTRO-realsense2* \
-  ros-$ROS_DISTRO-rqt-graph \
-  ros-$ROS_DISTRO-rqt-image-view \ 
-  ros-$ROS_DISTRO-joint-state-publisher-gui \
-  ros-$ROS_DISTRO-rviz2 \
-  ros-$ROS_DISTRO-ros-gz \
-  ros-$ROS_DISTRO-ign-ros2-control
-# steam-devices
-
-# Install Docker
-RUN apt-get update \
-  && install -m 0755 -d /etc/apt/keyrings \
-  && curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc \
-  && chmod a+r /etc/apt/keyrings/docker.asc
-RUN echo \
-  "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu \
-  $(. /etc/os-release && echo "${UBUNTU_CODENAME:-$VERSION_CODENAME}") stable" | \
-  tee /etc/apt/sources.list.d/docker.list > /dev/null
-RUN apt-get update && apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
-
-# Install tools for IMU calibration
-RUN pip install mpu9250-jmdev smbus2
-
-# Add user to the necessary groups
-RUN adduser $USERNAME dialout && adduser $USERNAME video
-
-USER $USERNAME
-
-# Finish ROS configuration for the user
-RUN echo "source /opt/ros/$ROS_DISTRO/setup.bash" >> /home/$USERNAME/.bashrc
-RUN echo "export RMW_IMPLEMENTATION=rmw_cyclonedds_cpp" >> /home/$USERNAME/.bashrc
-# RUN echo "export CYCLONEDDS_URI=/home/nanobot/ros_ws/cyclonedds_profile.xml" >> /home/$USERNAME/.bashrc
-RUN rosdep update
-
-# Setup node
-RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.2/install.sh | bash
-RUN bash -c "source ~/.nvm/nvm.sh && nvm install ${NODE_VERSION}"
-
-CMD ["/bin/bash"]
+# 7. Final Environment Setup
+WORKDIR /root/ros_ws
+RUN echo "source /opt/ros/humble/install/setup.bash" >> /root/.bashrc && \
+    echo "if [ -f /root/ros_ws/install/setup.bash ]; then source /root/ros_ws/install/setup.bash; fi" >> /root/.bashrc && \
+    echo "source /usr/share/colcon_argcomplete/hook/colcon-argcomplete.bash" >> /root/.bashrc && \
+    echo "export RMW_IMPLEMENTATION=rmw_cyclonedds_cpp" >> /root/.bashrc
+EXPOSE 2222
+CMD ["/usr/sbin/sshd", "-D"]

@@ -1,0 +1,11 @@
+services:
+  nanobot_core:
+    image: nanobot:latest
+    container_name: nanobot_dev
+    runtime: nvidia
+    privileged: true
+    network_mode: "host"
+    restart: unless-stopped
+    volumes:
+      - /dev:/dev:rshared
+      - ./ros_ws:/root/ros_ws/src/nanobot

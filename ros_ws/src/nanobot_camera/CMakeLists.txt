@@ -7,26 +7,6 @@ endif()
 
 # find dependencies
 find_package(ament_cmake REQUIRED)
-find_package(rclcpp REQUIRED)
-
-set(dependencies
-  rclcpp
-)
-
-include_directories(include)
-
-add_executable(docker_camera
-  src/nanobot_camera/DockerRunnerNode.cpp
-  src/run_container.cpp
-)
-ament_target_dependencies(docker_camera ${dependencies})
-
-install(TARGETS
-  docker_camera
-  ARCHIVE DESTINATION lib
-  LIBRARY DESTINATION lib
-  RUNTIME DESTINATION lib/${PROJECT_NAME}
-)
 
 install(
   DIRECTORY config launch
