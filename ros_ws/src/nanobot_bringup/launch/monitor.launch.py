@@ -6,35 +6,26 @@ from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument, IncludeLaunchDescription
 from launch.substitutions import LaunchConfiguration
 from launch.launch_description_sources import PythonLaunchDescriptionSource
+from launch_xml.launch_description_sources import XMLLaunchDescriptionSource
 
 from launch_ros.actions import Node
 
-SIM_PACKAGE_NAME = "nanobot_simulation"
 JOYSTICK_PACKAGE_NAME = "nanobot_joystick"
 
 
 def generate_launch_description():
-    use_sim_time_arg = DeclareLaunchArgument(
-        "use_sim_time", default_value="false", description="Use simulation time"
+    foxglove_launch_file = os.path.join(
+        get_package_share_directory('foxglove_bridge'),
+        'launch',
+        'foxglove_bridge_launch.xml'
     )
-    use_sim_time = LaunchConfiguration("use_sim_time")
-
-    world_file = os.path.join(
-        get_package_share_directory(SIM_PACKAGE_NAME), "config", "nanobot.rviz"
-    )
-    rviz = Node(
-        package="rviz2",
-        executable="rviz2",
-        arguments=["-d", world_file],
-        parameters=[{"use_sim_time": use_sim_time}],
-        output="screen",
-    )
-
-    rqt_image_view = Node(
-        package="rqt_image_view",
-        executable="rqt_image_view",
-        arguments=["/camera/color/image_raw/compressed"],
-        output="screen",
+    foxglove_bridge = IncludeLaunchDescription(
+        XMLLaunchDescriptionSource(foxglove_launch_file),
+        launch_arguments={
+            'port': '8765',
+            'address': '0.0.0.0',
+            'capabilities': "['clientPublish', 'connectionGraph', 'assets']"
+        }.items()
     )
 
     joystick_launch_file = os.path.join(
@@ -46,4 +37,7 @@ def generate_launch_description():
         PythonLaunchDescriptionSource([joystick_launch_file])
     )
 
-    return LaunchDescription([use_sim_time_arg, rviz, rqt_image_view, joystick])
+    return LaunchDescription([
+        foxglove_bridge, 
+        joystick
+        ])
