@@ -1,6 +1,6 @@
 FROM dustynv/ros:humble-ros-base-l4t-r36.3.0
 
-# 2. Fix ROS 2 GPG keys and Install System Dependencies
+# Fix ROS 2 GPG keys and Install System Dependencies
 RUN apt-get update || true && \
     apt-get install -y curl gnupg && \
     curl -sSL https://raw.githubusercontent.com/ros/rosdistro/master/ros.key -o /usr/share/keyrings/ros-archive-keyring.gpg && \
@@ -14,7 +14,7 @@ RUN apt-get update || true && \
     sed -i 's/#Port 22/Port 2222/' /etc/ssh/sshd_config && \
     rm -rf /var/lib/apt/lists/*
 
-# 3. Build LibRealSense v2.57.7
+# Build LibRealSense v2.57.7
 WORKDIR /opt
 RUN git clone --depth=1 --branch v2.57.7 https://github.com/realsenseai/librealsense.git && \
     cd librealsense && mkdir build && cd build && \
@@ -22,7 +22,7 @@ RUN git clone --depth=1 --branch v2.57.7 https://github.com/realsenseai/libreals
     make -j$(nproc) && make install && ldconfig && \
     rm -rf /opt/librealsense/build
 
-# 5. Install ROS dependencies
+# Install ROS dependencies
 WORKDIR /root/ros_ws/src/dependencies
 RUN git clone https://github.com/realsenseai/realsense-ros.git -b ros2-development && \
     git clone https://github.com/ros/diagnostics.git -b ros2-humble && \
@@ -51,7 +51,7 @@ RUN git clone https://github.com/realsenseai/realsense-ros.git -b ros2-developme
     git clone https://github.com/foxglove/foxglove-sdk.git -b sdk/v0.17.1 && \
     git clone https://github.com/ros/resource_retriever.git -b humble
 
-# 7. Final Environment Setup
+# Final Environment Setup
 WORKDIR /root/ros_ws
 RUN echo "source /opt/ros/humble/install/setup.bash" >> /root/.bashrc && \
     echo "if [ -f /root/ros_ws/install/setup.bash ]; then source /root/ros_ws/install/setup.bash; fi" >> /root/.bashrc && \
