@@ -5,21 +5,22 @@
   <xacro:include filename="inertial_macros.xacro" />
 
   <!-- Body dimensions -->
-  <xacro:property name="body_x_dim" value="0.14" />
-  <xacro:property name="body_y_dim" value="0.14" />
-  <xacro:property name="body_z_dim" value="0.076" />
-  <xacro:property name="body_z_offset" value="0.0175" />
+  <xacro:property name="body_x_dim" value="0.1425" />
+  <xacro:property name="body_y_dim" value="0.0765" />
+  <xacro:property name="body_z_dim" value="0.109" />
+  <xacro:property name="body_x_offset" value="0.02075" />
+  <xacro:property name="body_z_offset" value="0.01875" />
 
   <!-- Wheel dimensions -->
-  <xacro:property name="wheel_radius" value="0.03375" /> <!-- 67.5mm diameter -->
-  <xacro:property name="wheel_length" value="0.025" />
-  <xacro:property name="wheel_separation_from_body" value="0.0185" />
+  <xacro:property name="wheel_radius" value="0.033" /> <!-- 66mm diameter -->
+  <xacro:property name="wheel_length" value="0.018" />
+  <xacro:property name="wheel_separation_from_body" value="0.009" />
   <xacro:property name="caster_wheel_radius" value="${(wheel_radius - body_z_offset)/2}" />
 
   <!-- Robot body and wheel mass -->
-  <xacro:property name="body_mass" value="0.859" />
+  <xacro:property name="body_mass" value="0.941" />
   <xacro:property name="wheel_mass" value="0.028" />
-  <xacro:property name="caster_wheel_mass" value="0.008" />
+  <xacro:property name="caster_wheel_mass" value="0.041" />
 
   <!-- Moments of intertia of the wheel -->
   <xacro:macro name="inertia_wheel">
@@ -72,7 +73,7 @@
   <joint name="body_joint" type="fixed">
     <parent link="base_link" />
     <child link="body_link" />
-    <origin xyz="-${body_x_dim/2} 0 -${body_z_offset}"/>
+    <origin xyz="-${body_x_offset} 0 -${body_z_offset}"/>
   </joint>
 
   <link name="body_link">
@@ -167,48 +168,17 @@
     <mu2 value="0.2" /> -->
   </gazebo>
 
-  <!-- Back caster wheel -->
+  <!-- Caster wheel -->
 
-  <joint name="back_caster_wheel_joint" type="fixed">
+  <joint name="caster_wheel_joint" type="fixed">
       <parent link="body_link"/>
-      <child link="back_caster_wheel_link"/>
-      <origin 
-        xyz="${caster_wheel_radius} 0 -${caster_wheel_radius}" 
-        rpy="0 0 0"/>
-  </joint>
-
-  <link name="back_caster_wheel_link">
-    <visual>
-      <geometry>
-        <sphere radius="${caster_wheel_radius}" />
-      </geometry>
-      <material name="black"/>
-    </visual>
-    <collision>
-      <geometry>
-        <sphere radius="${caster_wheel_radius}" />
-      </geometry>
-    </collision>
-    <xacro:inertia_caster_wheel />
-  </link>
-
-  <gazebo reference="back_caster_wheel_link">
-    <material>Gazebo/Black</material>
-    <mu1 value="0.001"/>
-    <mu2 value="0.001"/>
-  </gazebo>
-
-  <!-- Front caster wheel -->
-
-  <joint name="front_caster_wheel_joint" type="fixed">
-      <parent link="body_link"/>
-      <child link="front_caster_wheel_link"/>
+      <child link="caster_wheel_link"/>
       <origin 
         xyz="${body_x_dim - caster_wheel_radius} 0 -${caster_wheel_radius}" 
         rpy="0 0 0"/>
   </joint>
 
-  <link name="front_caster_wheel_link">
+  <link name="caster_wheel_link">
     <visual>
       <geometry>
         <sphere radius="${caster_wheel_radius}" />
@@ -223,7 +193,7 @@
     <xacro:inertia_caster_wheel />
   </link>
 
-  <gazebo reference="front_caster_wheel_link">
+  <gazebo reference="caster_wheel_link">
     <material>Gazebo/Black</material>
     <mu1 value="0.001"/>
     <mu2 value="0.001"/>

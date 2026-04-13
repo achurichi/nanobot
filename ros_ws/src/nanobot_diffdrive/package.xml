@@ -9,15 +9,17 @@
 
   <buildtool_depend>ament_cmake</buildtool_depend>
 
+  <depend>rclcpp</depend>
+  <depend>rclcpp_lifecycle</depend>
+  <depend>hardware_interface</depend>
   <depend>pluginlib</depend>
-  <depend>controller_manager</depend>
-  <depend>diff_drive_controller</depend>
-  <depend>joint_state_broadcaster</depend>
-  <depend>robot_state_publisher</depend>
-  <depend>ros2controlcli</depend>
-  <depend>ros2launch</depend>
-  <depend>xacro</depend>
+  <depend>control_toolbox</depend>
   <depend>dynamixel_sdk</depend>
+  <depend>backward_ros</depend>
+
+  <exec_depend>xacro</exec_depend>
+  <exec_depend>diff_drive_controller</exec_depend>
+  <exec_depend>joint_state_broadcaster</exec_depend>
 
   <test_depend>ament_lint_auto</test_depend>
   <test_depend>ament_lint_common</test_depend>

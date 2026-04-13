@@ -19,11 +19,11 @@ import xacro
 PACKAGE_NAME = "nanobot_bringup"
 CONTROLER_PACKAGE_NAME = "nanobot_diffdrive"
 DESCRIPTION_PACKAGE_NAME = "nanobot_description"
-LIDAR_PACKAGE_NAME = "nanobot_lidar"
+# LIDAR_PACKAGE_NAME = "nanobot_lidar"
 CAMERA_PACKAGE_NAME = "nanobot_camera"
-IMU_PACKAGE_NAME = "nanobot_imu"
-NAVIGATION_PACKAGE_NAME = "nanobot_navigation"
-WEB_PACKAGE_NAME = "nanobot_web"
+# IMU_PACKAGE_NAME = "nanobot_imu"
+# NAVIGATION_PACKAGE_NAME = "nanobot_navigation"
+# WEB_PACKAGE_NAME = "nanobot_web"
 
 
 def generate_launch_description():
@@ -34,13 +34,6 @@ def generate_launch_description():
         description="Generate a new map using SLAM Toolbox",
     )
     generate_map = LaunchConfiguration("generate_map")
-
-    gpu_camera_arg = DeclareLaunchArgument(
-        "gpu_camera",
-        default_value="true",
-        description="Whether to use the camera with GPU acceleration",
-    )
-    gpu_camera = LaunchConfiguration("gpu_camera")
 
     # get URDF via xacro
     xacro_file = os.path.join(
@@ -107,12 +100,12 @@ def generate_launch_description():
     )
 
     # Lidar
-    lidar_launch_path = os.path.join(
-        get_package_share_directory(LIDAR_PACKAGE_NAME), "launch", "lidar.launch.py"
-    )
-    lidar = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource([lidar_launch_path]),
-    )
+    # lidar_launch_path = os.path.join(
+    #     get_package_share_directory(LIDAR_PACKAGE_NAME), "launch", "lidar.launch.py"
+    # )
+    # lidar = IncludeLaunchDescription(
+    #     PythonLaunchDescriptionSource([lidar_launch_path]),
+    # )
 
     # Camera
     camera_launch_path = os.path.join(
@@ -120,33 +113,30 @@ def generate_launch_description():
     )
     camera = IncludeLaunchDescription(
         PythonLaunchDescriptionSource([camera_launch_path]),
-        launch_arguments={
-            "gpu_camera": gpu_camera,
-        }.items(),
     )
 
     # IMU
-    imu_launch_path = os.path.join(
-        get_package_share_directory(IMU_PACKAGE_NAME), "launch", "imu.launch.py"
-    )
-    imu = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource([imu_launch_path]),
-    )
+    # imu_launch_path = os.path.join(
+    #     get_package_share_directory(IMU_PACKAGE_NAME), "launch", "imu.launch.py"
+    # )
+    # imu = IncludeLaunchDescription(
+    #     PythonLaunchDescriptionSource([imu_launch_path]),
+    # )
 
     # Navigation
-    navigation_launch_path = os.path.join(
-        get_package_share_directory(NAVIGATION_PACKAGE_NAME),
-        "launch",
-        "navigation.launch.py",
-    )
-    navigation = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource([navigation_launch_path]),
-        launch_arguments={
-            "generate_map": generate_map,
-            "map": "/home/nanobot/ros_ws/src/nanobot_navigation/maps/room.yaml",
-            "use_sim_time": "false",
-        }.items(),
-    )
+    # navigation_launch_path = os.path.join(
+    #     get_package_share_directory(NAVIGATION_PACKAGE_NAME),
+    #     "launch",
+    #     "navigation.launch.py",
+    # )
+    # navigation = IncludeLaunchDescription(
+    #     PythonLaunchDescriptionSource([navigation_launch_path]),
+    #     launch_arguments={
+    #         "generate_map": generate_map,
+    #         "map": "/home/nanobot/ros_ws/src/nanobot_navigation/maps/room.yaml",
+    #         "use_sim_time": "false",
+    #     }.items(),
+    # )
 
     # Twist Mux
     twist_mux_config_path = os.path.join(
@@ -162,24 +152,23 @@ def generate_launch_description():
     )
 
     # Websocket connection
-    web_launch_path = os.path.join(
-        get_package_share_directory(WEB_PACKAGE_NAME), "launch", "web.launch.py"
-    )
-    web = IncludeLaunchDescription(PythonLaunchDescriptionSource([web_launch_path]))
+    # web_launch_path = os.path.join(
+    #     get_package_share_directory(WEB_PACKAGE_NAME), "launch", "web.launch.py"
+    # )
+    # web = IncludeLaunchDescription(PythonLaunchDescriptionSource([web_launch_path]))
 
     return LaunchDescription(
         [
             generate_map_arg,
-            gpu_camera_arg,
             control_node,
             robot_state_pub_node,
             robot_controller_spawner,
             delay_joint_state_broadcaster_after_robot_controller_spawner,
-            lidar,
+            # lidar,
             camera,
-            imu,
-            navigation,
+            # imu,
+            # navigation,
             twist_mux,
-            web,
+            # web,
         ]
     )

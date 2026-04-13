@@ -1,8 +1,4 @@
 repositories:
-  third_party/dynamixel_sdk:
-    type: git
-    url: https://github.com/ROBOTIS-GIT/DynamixelSDK.git
-    version: humble-devel
   third_party/ldrobot_lidar:
     type: git
     url: https://github.com/Myzhar/ldrobot-lidar-ros2.git
