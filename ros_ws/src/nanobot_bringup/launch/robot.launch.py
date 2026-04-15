@@ -22,7 +22,7 @@ DESCRIPTION_PACKAGE_NAME = "nanobot_description"
 # LIDAR_PACKAGE_NAME = "nanobot_lidar"
 CAMERA_PACKAGE_NAME = "nanobot_camera"
 # IMU_PACKAGE_NAME = "nanobot_imu"
-# NAVIGATION_PACKAGE_NAME = "nanobot_navigation"
+NAVIGATION_PACKAGE_NAME = "nanobot_navigation"
 # WEB_PACKAGE_NAME = "nanobot_web"
 
 
@@ -124,19 +124,19 @@ def generate_launch_description():
     # )
 
     # Navigation
-    # navigation_launch_path = os.path.join(
-    #     get_package_share_directory(NAVIGATION_PACKAGE_NAME),
-    #     "launch",
-    #     "navigation.launch.py",
-    # )
-    # navigation = IncludeLaunchDescription(
-    #     PythonLaunchDescriptionSource([navigation_launch_path]),
-    #     launch_arguments={
-    #         "generate_map": generate_map,
-    #         "map": "/home/nanobot/ros_ws/src/nanobot_navigation/maps/room.yaml",
-    #         "use_sim_time": "false",
-    #     }.items(),
-    # )
+    navigation_launch_path = os.path.join(
+        get_package_share_directory(NAVIGATION_PACKAGE_NAME),
+        "launch",
+        "navigation.launch.py",
+    )
+    navigation = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource([navigation_launch_path]),
+        launch_arguments={
+            "generate_map": generate_map,
+            "map": "/home/nanobot/ros_ws/src/nanobot_navigation/maps/room.yaml",
+            "use_sim_time": "false",
+        }.items(),
+    )
 
     # Twist Mux
     twist_mux_config_path = os.path.join(
@@ -167,7 +167,7 @@ def generate_launch_description():
             # lidar,
             camera,
             # imu,
-            # navigation,
+            navigation,
             twist_mux,
             # web,
         ]
