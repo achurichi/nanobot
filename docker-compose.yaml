@@ -8,4 +8,4 @@ services:
     restart: unless-stopped
     volumes:
       - /dev:/dev:rshared
-      - ./ros_ws:/root/ros_ws/src/nanobot
+      - ./ros:/root/ros_ws/src/nanobot

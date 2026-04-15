@@ -4,7 +4,7 @@
 FROM ubuntu:22.04 AS prep
 
 WORKDIR /tmp_packages
-COPY ./ros_ws .
+COPY ./ros .
 # Delete everything EXCEPT package.xml files. 
 RUN find . -type f ! -name "package.xml" -delete 
 
