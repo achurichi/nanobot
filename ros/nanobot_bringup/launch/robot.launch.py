@@ -133,7 +133,7 @@ def generate_launch_description():
         PythonLaunchDescriptionSource([navigation_launch_path]),
         launch_arguments={
             "generate_map": generate_map,
-            "map": "/home/nanobot/ros_ws/src/nanobot_navigation/maps/room.yaml",
+            "map": "/root/ros_ws/src/nanobot/nanobot_navigation/maps/room.db",
             "use_sim_time": "false",
         }.items(),
     )

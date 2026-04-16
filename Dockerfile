@@ -21,7 +21,7 @@ RUN apt-get update || true && apt-get install -y curl gnupg && \
     git cmake libssl-dev libusb-1.0-0-dev pkg-config libgtk-3-dev usbutils libcap-dev libspnav-dev libbluetooth-dev libcwiid-dev libexpected-dev \
     openssh-server python3-pip python3-typeguard python3-jinja2 nano build-essential rapidjson-dev nlohmann-json3-dev libwebsocketpp-dev \
     libboost-program-options-dev libboost-dev libgraphicsmagick++1-dev libxaw7-dev qtbase5-dev qtdeclarative5-dev libceres-dev libxtensor-dev \
-    libxsimd-dev libnanoflann-dev libompl-dev libboost-serialization-dev libboost-system-dev libboost-filesystem-dev && \
+    libxsimd-dev libnanoflann-dev libompl-dev libboost-serialization-dev libboost-system-dev libboost-filesystem-dev libpcl-dev && \
     # SSH Configuration: Port 2222 to avoid conflict with Jetson Host
     mkdir /var/run/sshd && echo 'root:root' | chpasswd && \
     sed -i 's/#PermitRootLogin prohibit-password/PermitRootLogin yes/' /etc/ssh/sshd_config && \
@@ -41,9 +41,12 @@ WORKDIR /root/ros_ws/src/dependencies
 RUN git clone https://github.com/realsenseai/realsense-ros.git -b ros2-development && \
     git clone https://github.com/ros/diagnostics.git -b ros2-humble && \
     # Delete the buggy modules not needed
-    rm -rf diagnostics/diagnostic_remote_logging diagnostics/diagnostic_aggregator && \
+    # rm -rf diagnostics/diagnostic_remote_logging diagnostics/diagnostic_aggregator && \
     git clone https://github.com/ros-perception/image_common.git -b humble && \
     git clone https://github.com/ros-perception/vision_opencv.git -b humble && \
+    # Base packages geometry2 and message_filters built from source to fix visibility issues in dependencies
+    git clone https://github.com/ros2/geometry2.git -b humble && \
+    git clone https://github.com/ros2/message_filters.git -b humble && \
     # git clone https://github.com/ros2/demos.git -b humble && \
     # git clone https://github.com/ros2/teleop_twist_keyboard.git -b humble && \
     git clone https://github.com/ros-drivers/joystick_drivers.git -b ros2 && \
@@ -66,7 +69,6 @@ RUN git clone https://github.com/realsenseai/realsense-ros.git -b ros2-developme
     git clone https://github.com/ros/resource_retriever.git -b humble && \
     git clone https://github.com/ros/bond_core.git -b humble && \
     git clone https://github.com/ros/angles.git -b humble-devel && \
-    git clone https://github.com/ros2/geometry2.git -b humble && \
     git clone https://github.com/BehaviorTree/BehaviorTree.CPP.git -b v3.8 && \
     git clone https://github.com/ros2/rviz.git -b humble && \
     git clone https://github.com/gazebosim/gz-cmake.git -b ign-cmake2 && \
@@ -74,7 +76,13 @@ RUN git clone https://github.com/realsenseai/realsense-ros.git -b ros2-developme
     git clone https://github.com/ros-visualization/interactive_markers.git -b humble && \
     git clone https://github.com/ros-perception/laser_geometry.git -b humble && \
     git clone https://github.com/ros-planning/navigation_msgs.git -b humble && \
-    git clone https://github.com/ros-navigation/navigation2.git -b humble
+    git clone https://github.com/ros-navigation/navigation2.git -b humble && \
+    git clone https://github.com/ros-perception/pcl_msgs.git -b ros2 && \
+    git clone https://github.com/ros-perception/perception_pcl.git -b humble && \
+    git clone https://github.com/introlab/rtabmap.git && \
+    git clone https://github.com/introlab/rtabmap_ros.git -b ros2 && \
+    # Fix hardcoded aarch64 library paths so CMake can find rcutils in our custom /install/lib directory
+    find src/dependencies/rtabmap_ros -name "CMakeLists.txt" -type f -exec sed -i 's|PATHS "/opt/ros/$ENV{ROS_DISTRO}/lib"|PATHS "/opt/ros/$ENV{ROS_DISTRO}/install/lib"|g' {} +
 
 # Temporarily copy nanobot packages to map and build only external dependencies, then clean up for the runtime volume mount
 WORKDIR /root/ros_ws

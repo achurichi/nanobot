@@ -1,0 +1,17 @@
+rtabmap:
+  ros__parameters:
+    # ROS-specific parameters
+    frame_id: "base_footprint"
+    subscribe_depth: True
+    subscribe_rgb: True
+    subscribe_scan: False
+    
+    # Core RTAB-Map parameters
+    # TODO: Check these params
+    "Grid/FromDepth": "true"
+    "Reg/Strategy": "0"
+    "RGBD/NeighborLinkRefining": "true"
+    "DbSqlite3/BufferSize": "1024"
+    "Mem/InitWMWithAllNodes": "true"
+    "RGBD/LinearUpdate": "0.1"
+    "RGBD/AngularUpdate": "0.1"

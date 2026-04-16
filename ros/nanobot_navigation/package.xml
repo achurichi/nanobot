@@ -17,8 +17,6 @@
   <exec_depend>ament_index_python</exec_depend>
 
   <exec_depend>rtabmap_ros</exec_depend>
-  <exec_depend>rtabmap_slam</exec_depend>
-  <exec_depend>rtabmap_odom</exec_depend>
 
   <exec_depend>navigation2</exec_depend>
   <exec_depend>nav2_bringup</exec_depend>
