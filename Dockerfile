@@ -82,7 +82,7 @@ RUN git clone https://github.com/realsenseai/realsense-ros.git -b ros2-developme
     git clone https://github.com/introlab/rtabmap.git && \
     git clone https://github.com/introlab/rtabmap_ros.git -b ros2 && \
     # Fix hardcoded aarch64 library paths so CMake can find rcutils in our custom /install/lib directory
-    find src/dependencies/rtabmap_ros -name "CMakeLists.txt" -type f -exec sed -i 's|PATHS "/opt/ros/$ENV{ROS_DISTRO}/lib"|PATHS "/opt/ros/$ENV{ROS_DISTRO}/install/lib"|g' {} +
+    find rtabmap_ros -name "CMakeLists.txt" -type f -exec sed -i 's|PATHS "/opt/ros/$ENV{ROS_DISTRO}/lib"|PATHS "/opt/ros/$ENV{ROS_DISTRO}/install/lib"|g' {} +
 
 # Temporarily copy nanobot packages to map and build only external dependencies, then clean up for the runtime volume mount
 WORKDIR /root/ros_ws
