@@ -14,7 +14,6 @@ PACKAGE_NAME = "nanobot_bringup"
 BRINGUP_PACKAGE_NAME = "nanobot_bringup"
 SIM_PACKAGE_NAME = "nanobot_simulation"
 NAVIGATION_PACKAGE_NAME = "nanobot_navigation"
-WEB_PACKAGE_NAME = "nanobot_web"
 
 
 def generate_launch_description():
@@ -138,12 +137,6 @@ def generate_launch_description():
         remappings=[("/cmd_vel_out", "/diff_controller/cmd_vel_unstamped")],
     )
 
-    # Websocket connection
-    web_launch_path = os.path.join(
-        get_package_share_directory(WEB_PACKAGE_NAME), "launch", "web.launch.py"
-    )
-    web = IncludeLaunchDescription(PythonLaunchDescriptionSource([web_launch_path]))
-
     return LaunchDescription(
         [
             generate_map_arg,
@@ -157,6 +150,5 @@ def generate_launch_description():
             depth_cam_link_tf,
             navigation,
             twist_mux,
-            web,
         ]
     )
