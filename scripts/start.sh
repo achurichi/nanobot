@@ -9,15 +9,14 @@ for arg in "$@"; do
     SIM_MODE="true"
   elif [ "$arg" == "generate_map" ]; then
     GENERATE_MAP="true"
+  fi
 done
 
 # ROS 2 launch
-cd "/home/nanobot/ros_ws"
+cd "/root/ros_ws"
 source install/setup.bash
 if [ "$SIM_MODE" == "true" ]; then
   ros2 launch nanobot_bringup simulation.launch.py generate_map:="$GENERATE_MAP"
 else
   ros2 launch nanobot_bringup robot.launch.py generate_map:="$GENERATE_MAP"
 fi
-
-wait

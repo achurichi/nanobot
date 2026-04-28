@@ -1,7 +1,11 @@
 #!/bin/bash
 
-# Get third party repos
-cd "/home/nanobot/ros_ws"
+cd "/root/ros_ws"
 
-colcon build --symlink-install --packages-up-to ignition-math6
-source install/setup.bash && colcon build --symlink-install --packages-up-to nanobot_bringup
+TARGET_PACKAGES=$(colcon list --base-paths src/nanobot --names-only)
+
+if [[ "$1" == "all" ]]; then
+  colcon build --symlink-install --packages-up-to $TARGET_PACKAGES
+else
+  colcon build --symlink-install --packages-select $TARGET_PACKAGES
+fi

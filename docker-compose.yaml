@@ -13,5 +13,6 @@ services:
       - 'c 13:* rmw' # Allow all input devices
     volumes:
       - /dev:/dev:rshared
-      - ./ros:/root/ros_ws/src/nanobot
       - /run/udev:/run/udev:ro
+      - ./ros:/root/ros_ws/src/nanobot
+      - ./scripts:/root/ros_ws/scripts
