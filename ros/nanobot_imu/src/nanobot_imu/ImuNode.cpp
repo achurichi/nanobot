@@ -17,11 +17,11 @@ namespace nanobot_imu
       : Node("nanobot_imu"), _bno085(std::make_unique<BNO085>())
   {
     // Parameters
-    declare_parameter("device", "/dev/i2c-0");
-    declare_parameter("address", 0x4B);
-    declare_parameter("read_freq", 50.0);
-    declare_parameter("publish_freq", 30.0);
-    declare_parameter("frame_id", "imu_link");
+    declare_parameter<std::string>("device");
+    declare_parameter<int>("address");
+    declare_parameter<double>("read_freq");
+    declare_parameter<double>("publish_freq");
+    declare_parameter<std::string>("frame_id");
 
     std::string device = get_parameter("device").as_string();
     int address = get_parameter("address").as_int();
@@ -49,7 +49,7 @@ namespace nanobot_imu
                   _bno085->prod_ids.entry[n].swBuildNumber);
     }
 
-    // _bno085->start_dynamic_calibration();
+    _bno085->start_dynamic_calibration();
 
     // Setup reports
     setup_reports(read_freq);
@@ -83,8 +83,18 @@ namespace nanobot_imu
       this->_imu_msg.orientation.z = sensor_value.un.arvrStabilizedRV.k;
       this->_imu_msg.orientation.w = sensor_value.un.arvrStabilizedRV.real;
       this->_imu_msg.header.stamp = this->get_clock()->now();
-      // RCLCPP_INFO(get_logger(), "Accuracy RV: %d", sensor_value.status);
+      RCLCPP_INFO(get_logger(), "Accuracy RV: %d", sensor_value.status);
     };
+
+    // auto const handle_game_rotation_vector = [this](const sh2_SensorValue_t &sensor_value)
+    // {
+    //   this->_imu_msg.orientation.x = sensor_value.un.gameRotationVector.i;
+    //   this->_imu_msg.orientation.y = sensor_value.un.gameRotationVector.j;
+    //   this->_imu_msg.orientation.z = sensor_value.un.gameRotationVector.k;
+    //   this->_imu_msg.orientation.w = sensor_value.un.gameRotationVector.real;
+    //   this->_imu_msg.header.stamp = this->get_clock()->now();
+    //   RCLCPP_INFO(get_logger(), "Accuracy Game RV: %d", sensor_value.status);
+    // };
 
     auto const handle_linear_acceleration = [this](const sh2_SensorValue_t &sensor_value)
     {
@@ -92,7 +102,7 @@ namespace nanobot_imu
       this->_imu_msg.linear_acceleration.y = sensor_value.un.linearAcceleration.y;
       this->_imu_msg.linear_acceleration.z = sensor_value.un.linearAcceleration.z;
       this->_imu_msg.header.stamp = this->get_clock()->now();
-      // RCLCPP_INFO(get_logger(), "Accuracy lin acc: %d", sensor_value.status);
+      RCLCPP_INFO(get_logger(), "Accuracy lin acc: %d", sensor_value.status);
     };
 
     auto const handle_gyroscope_calibrated = [this](const sh2_SensorValue_t &sensor_value)
@@ -101,7 +111,7 @@ namespace nanobot_imu
       this->_imu_msg.angular_velocity.y = sensor_value.un.gyroscope.y;
       this->_imu_msg.angular_velocity.z = sensor_value.un.gyroscope.z;
       this->_imu_msg.header.stamp = this->get_clock()->now();
-      // RCLCPP_INFO(get_logger(), "Accuracy gyro: %d", sensor_value.status);
+      RCLCPP_INFO(get_logger(), "Accuracy gyro: %d", sensor_value.status);
     };
 
     auto const handle_magnetic_field_calibrated = [this](const sh2_SensorValue_t &sensor_value)
@@ -110,14 +120,16 @@ namespace nanobot_imu
       this->_mag_msg.magnetic_field.y = sensor_value.un.magneticField.y * 1e-6;
       this->_mag_msg.magnetic_field.z = sensor_value.un.magneticField.z * 1e-6;
       this->_mag_msg.header.stamp = this->get_clock()->now();
-      // RCLCPP_INFO(get_logger(), "Accuracy magnetometer: %d", sensor_value.status);
+      RCLCPP_INFO(get_logger(), "Accuracy magnetometer: %d", sensor_value.status);
     };
 
     ReportCallbacksMap reports = {
-        {SH2_ARVR_STABILIZED_RV, handle_ARVR_stabilized_RV},
-        {SH2_LINEAR_ACCELERATION, handle_linear_acceleration},
-        {SH2_GYROSCOPE_CALIBRATED, handle_gyroscope_calibrated},
-        {SH2_MAGNETIC_FIELD_CALIBRATED, handle_magnetic_field_calibrated}};
+      // {SH2_GAME_ROTATION_VECTOR, handle_game_rotation_vector},
+      {SH2_ARVR_STABILIZED_RV, handle_ARVR_stabilized_RV},
+      {SH2_LINEAR_ACCELERATION, handle_linear_acceleration},
+      {SH2_GYROSCOPE_CALIBRATED, handle_gyroscope_calibrated},
+      {SH2_MAGNETIC_FIELD_CALIBRATED, handle_magnetic_field_calibrated}
+    };
 
     auto report_interval_us = static_cast<uint32_t>(1e6 / read_freq);
 

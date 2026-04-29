@@ -1,6 +1,6 @@
 /nanobot_imu:
   ros__parameters:
-    device: /dev/i2c-0
+    device: /dev/i2c-1
     address: 75 # 0x4B in decimal
     read_freq: 50.0
     publish_freq: 30.0
