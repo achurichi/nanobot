@@ -26,13 +26,13 @@ diff_controller:
     publish_rate: 30.0
     odom_frame_id: odom
     base_frame_id: base_link
-    # pose_covariance_diagonal : [0.001, 0.001, 0.001, 0.001, 0.001, 0.01]
-    # twist_covariance_diagonal: [0.001, 0.001, 0.001, 0.001, 0.001, 0.01]
+    pose_covariance_diagonal : [0.001, 0.001, 0.001, 0.001, 0.001, 0.01]
+    twist_covariance_diagonal: [0.001, 0.001, 0.001, 0.001, 0.001, 0.01]
 
     use_stamped_vel: false
 
     open_loop: false
-    enable_odom_tf: true
+    enable_odom_tf: false # Set to true if ekf is disabled
 
     cmd_vel_timeout: 0.5
     # publish_limited_velocity: true

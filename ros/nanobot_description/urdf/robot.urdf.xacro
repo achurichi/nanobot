@@ -9,7 +9,7 @@
 
   <xacro:include filename="camera.xacro" />
 
-  <!-- <xacro:include filename="imu.xacro" /> -->
+  <xacro:include filename="imu.xacro" />
 
   <xacro:if value="$(arg sim_mode)">
     <xacro:include filename="$(find nanobot_diffdrive)/description/gazebo_ros2_control.xacro" />

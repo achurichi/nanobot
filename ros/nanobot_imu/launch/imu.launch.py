@@ -20,25 +20,17 @@ def generate_launch_description():
         shell=True,
     )
 
-    # madgwick_filter = Node(
-    #     package="imu_filter_madgwick",
-    #     executable="imu_filter_madgwick_node",
-    #     name="madgwick_filter",
-    #     parameters=[os.path.join(pkg_path, "config", "madgwick_filter.yaml")],
-    # )
-
-    # ekf_localization = Node(
-    #     package="robot_localization",
-    #     executable="ekf_node",
-    #     name="ekf_filter_node",
-    #     output="screen",
-    #     parameters=[os.path.join(pkg_path, "config", "ekf.yaml")],
-    # )
+    ekf_localization = Node(
+        package="robot_localization",
+        executable="ekf_node",
+        name="ekf_filter_node",
+        output="screen",
+        parameters=[os.path.join(pkg_path, "config", "ekf.yaml")],
+    )
 
     return LaunchDescription(
         [
             imu_raw,
-            # madgwick_filter,
-            # ekf_localization,
+            ekf_localization,
         ]
     )

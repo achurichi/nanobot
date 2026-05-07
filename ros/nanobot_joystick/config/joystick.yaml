@@ -20,7 +20,7 @@ teleop_node:
     scale_angular_turbo:
       yaw: 1.5
 
-    enable_button: 9 # Steam Deck LT, 6 for Xbox Series Joystick
-    enable_turbo_button: 10 # Steam Decl RT, 7 for Xbox Series Joystick
+    enable_button: 6 # 9 Steam Deck LT, 6 for Xbox Series Joystick
+    enable_turbo_button: 7 # 10 Steam Decl RT, 7 for Xbox Series Joystick
 
     require_enable_button: true

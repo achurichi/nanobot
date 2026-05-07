@@ -22,12 +22,17 @@ namespace nanobot_imu
     declare_parameter<double>("read_freq");
     declare_parameter<double>("publish_freq");
     declare_parameter<std::string>("frame_id");
+    declare_parameter<bool>("use_mag", false);
+    declare_parameter<bool>("enable_dynamic_cal", true); 
+    declare_parameter<bool>("debug", false);
 
     std::string device = get_parameter("device").as_string();
     int address = get_parameter("address").as_int();
     double read_freq = get_parameter("read_freq").as_double();
     double publish_freq = get_parameter("publish_freq").as_double();
     std::string frame_id = get_parameter("frame_id").as_string();
+    bool use_mag = get_parameter("use_mag").as_bool();
+    bool enable_dynamic_cal = get_parameter("enable_dynamic_cal").as_bool();
 
     // Enable I2C communication
     if (!_bno085->begin_i2c(device, address))
@@ -49,7 +54,12 @@ namespace nanobot_imu
                   _bno085->prod_ids.entry[n].swBuildNumber);
     }
 
-    _bno085->start_dynamic_calibration();
+    // Conditionally start dynamic calibration
+    if (enable_dynamic_cal)
+    {
+      _bno085->start_dynamic_calibration();
+    }
+    RCLCPP_INFO(get_logger(), "Dynamic calibration %s", enable_dynamic_cal ? "enabled" : "disabled");
 
     // Setup reports
     setup_reports(read_freq);
@@ -59,8 +69,11 @@ namespace nanobot_imu
     _mag_msg.header.frame_id = frame_id;
 
     // Create publishers
-    _imu_publisher = create_publisher<sensor_msgs::msg::Imu>("imu/data_raw", 10);
-    _mag_publisher = create_publisher<sensor_msgs::msg::MagneticField>("imu/mag", 10);
+    _imu_publisher = create_publisher<sensor_msgs::msg::Imu>("imu/data", 10);
+    if (use_mag)
+    {
+      _mag_publisher = create_publisher<sensor_msgs::msg::MagneticField>("imu/mag", 10);
+    }
 
     // Start timers
     auto publish_interval_ms = std::chrono::milliseconds(static_cast<int>(1000 / publish_freq));
@@ -76,60 +89,84 @@ namespace nanobot_imu
 
   void ImuNode::setup_reports(double read_freq)
   {
-    auto const handle_ARVR_stabilized_RV = [this](const sh2_SensorValue_t &sensor_value)
+    bool use_mag = get_parameter("use_mag").as_bool();
+    bool debug = get_parameter("debug").as_bool();
+
+    auto const handle_linear_acceleration = [this, debug](const sh2_SensorValue_t &sensor_value)
+    {
+      this->_imu_msg.linear_acceleration.x = sensor_value.un.linearAcceleration.x;
+      this->_imu_msg.linear_acceleration.y = sensor_value.un.linearAcceleration.y;
+      this->_imu_msg.linear_acceleration.z = sensor_value.un.linearAcceleration.z;
+      this->_imu_msg.header.stamp = this->get_clock()->now();
+      if (debug)
+      {
+        RCLCPP_INFO_THROTTLE(get_logger(), *get_clock(), 1000, "Accuracy lin acc: %d", sensor_value.status);
+      }
+    };
+
+    auto const handle_gyroscope_calibrated = [this, debug](const sh2_SensorValue_t &sensor_value)
+    {
+      this->_imu_msg.angular_velocity.x = sensor_value.un.gyroscope.x;
+      this->_imu_msg.angular_velocity.y = sensor_value.un.gyroscope.y;
+      this->_imu_msg.angular_velocity.z = sensor_value.un.gyroscope.z;
+      this->_imu_msg.header.stamp = this->get_clock()->now();
+      if (debug)
+      {
+        RCLCPP_INFO_THROTTLE(get_logger(), *get_clock(), 1000, "Accuracy gyro: %d", sensor_value.status);
+      }
+    };
+
+    auto const handle_magnetic_field_calibrated = [this, debug](const sh2_SensorValue_t &sensor_value)
+    {
+      this->_mag_msg.magnetic_field.x = sensor_value.un.magneticField.x * 1e-6;
+      this->_mag_msg.magnetic_field.y = sensor_value.un.magneticField.y * 1e-6;
+      this->_mag_msg.magnetic_field.z = sensor_value.un.magneticField.z * 1e-6;
+      this->_mag_msg.header.stamp = this->get_clock()->now();
+      if (debug)
+      {
+        RCLCPP_INFO_THROTTLE(get_logger(), *get_clock(), 1000, "Accuracy magnetometer: %d", sensor_value.status);
+      }
+    };
+
+    auto const handle_ARVR_stabilized_RV = [this, debug](const sh2_SensorValue_t &sensor_value)
     {
       this->_imu_msg.orientation.x = sensor_value.un.arvrStabilizedRV.i;
       this->_imu_msg.orientation.y = sensor_value.un.arvrStabilizedRV.j;
       this->_imu_msg.orientation.z = sensor_value.un.arvrStabilizedRV.k;
       this->_imu_msg.orientation.w = sensor_value.un.arvrStabilizedRV.real;
       this->_imu_msg.header.stamp = this->get_clock()->now();
-      RCLCPP_INFO(get_logger(), "Accuracy RV: %d", sensor_value.status);
+      if (debug)
+      {
+        RCLCPP_INFO_THROTTLE(get_logger(), *get_clock(), 1000, "Accuracy RV: %d", sensor_value.status);
+      }
     };
 
-    // auto const handle_game_rotation_vector = [this](const sh2_SensorValue_t &sensor_value)
-    // {
-    //   this->_imu_msg.orientation.x = sensor_value.un.gameRotationVector.i;
-    //   this->_imu_msg.orientation.y = sensor_value.un.gameRotationVector.j;
-    //   this->_imu_msg.orientation.z = sensor_value.un.gameRotationVector.k;
-    //   this->_imu_msg.orientation.w = sensor_value.un.gameRotationVector.real;
-    //   this->_imu_msg.header.stamp = this->get_clock()->now();
-    //   RCLCPP_INFO(get_logger(), "Accuracy Game RV: %d", sensor_value.status);
-    // };
-
-    auto const handle_linear_acceleration = [this](const sh2_SensorValue_t &sensor_value)
+    auto const handle_game_rotation_vector = [this, debug](const sh2_SensorValue_t &sensor_value)
     {
-      this->_imu_msg.linear_acceleration.x = sensor_value.un.linearAcceleration.x;
-      this->_imu_msg.linear_acceleration.y = sensor_value.un.linearAcceleration.y;
-      this->_imu_msg.linear_acceleration.z = sensor_value.un.linearAcceleration.z;
+      this->_imu_msg.orientation.x = sensor_value.un.gameRotationVector.i;
+      this->_imu_msg.orientation.y = sensor_value.un.gameRotationVector.j;
+      this->_imu_msg.orientation.z = sensor_value.un.gameRotationVector.k;
+      this->_imu_msg.orientation.w = sensor_value.un.gameRotationVector.real;
       this->_imu_msg.header.stamp = this->get_clock()->now();
-      RCLCPP_INFO(get_logger(), "Accuracy lin acc: %d", sensor_value.status);
+      if (debug)
+      {
+        RCLCPP_INFO_THROTTLE(get_logger(), *get_clock(), 1000, "Accuracy Game RV: %d", sensor_value.status);
+      }
     };
 
-    auto const handle_gyroscope_calibrated = [this](const sh2_SensorValue_t &sensor_value)
-    {
-      this->_imu_msg.angular_velocity.x = sensor_value.un.gyroscope.x;
-      this->_imu_msg.angular_velocity.y = sensor_value.un.gyroscope.y;
-      this->_imu_msg.angular_velocity.z = sensor_value.un.gyroscope.z;
-      this->_imu_msg.header.stamp = this->get_clock()->now();
-      RCLCPP_INFO(get_logger(), "Accuracy gyro: %d", sensor_value.status);
-    };
-
-    auto const handle_magnetic_field_calibrated = [this](const sh2_SensorValue_t &sensor_value)
-    {
-      this->_mag_msg.magnetic_field.x = sensor_value.un.magneticField.x * 1e-6;
-      this->_mag_msg.magnetic_field.y = sensor_value.un.magneticField.y * 1e-6;
-      this->_mag_msg.magnetic_field.z = sensor_value.un.magneticField.z * 1e-6;
-      this->_mag_msg.header.stamp = this->get_clock()->now();
-      RCLCPP_INFO(get_logger(), "Accuracy magnetometer: %d", sensor_value.status);
-    };
-
+    // Base reports that are always enabled
     ReportCallbacksMap reports = {
-      // {SH2_GAME_ROTATION_VECTOR, handle_game_rotation_vector},
-      {SH2_ARVR_STABILIZED_RV, handle_ARVR_stabilized_RV},
       {SH2_LINEAR_ACCELERATION, handle_linear_acceleration},
-      {SH2_GYROSCOPE_CALIBRATED, handle_gyroscope_calibrated},
-      {SH2_MAGNETIC_FIELD_CALIBRATED, handle_magnetic_field_calibrated}
+      {SH2_GYROSCOPE_CALIBRATED, handle_gyroscope_calibrated}
     };
+
+    // Conditionally add the correct orientation and magnetometer reports
+    if (use_mag) {
+      reports[SH2_MAGNETIC_FIELD_CALIBRATED] = handle_magnetic_field_calibrated;
+      reports[SH2_ARVR_STABILIZED_RV] = handle_ARVR_stabilized_RV;
+    } else {
+      reports[SH2_GAME_ROTATION_VECTOR] = handle_game_rotation_vector;
+    }
 
     auto report_interval_us = static_cast<uint32_t>(1e6 / read_freq);
 
@@ -150,6 +187,9 @@ namespace nanobot_imu
   void ImuNode::publish_data()
   {
     _imu_publisher->publish(_imu_msg);
-    _mag_publisher->publish(_mag_msg);
+    if (_mag_publisher)
+    {
+      _mag_publisher->publish(_mag_msg);
+    }
   }
 } // namespace nanobot_imu

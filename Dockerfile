@@ -21,7 +21,8 @@ RUN apt-get update || true && apt-get install -y curl gnupg && \
     git cmake libssl-dev libusb-1.0-0-dev pkg-config libgtk-3-dev usbutils libcap-dev libspnav-dev libbluetooth-dev libcwiid-dev libexpected-dev \
     openssh-server python3-pip python3-typeguard python3-jinja2 nano build-essential rapidjson-dev nlohmann-json3-dev libwebsocketpp-dev \
     libboost-program-options-dev libboost-dev libgraphicsmagick++1-dev libxaw7-dev qtbase5-dev qtdeclarative5-dev libceres-dev libxtensor-dev \
-    libxsimd-dev libnanoflann-dev libompl-dev libboost-serialization-dev libboost-system-dev libboost-filesystem-dev libpcl-dev && \
+    libxsimd-dev libnanoflann-dev libompl-dev libboost-serialization-dev libboost-system-dev libboost-filesystem-dev libpcl-dev \
+    libgeographic-dev geographiclib-tools && \
     # SSH Configuration: Port 2222 to avoid conflict with Jetson Host
     mkdir /var/run/sshd && echo 'root:root' | chpasswd && \
     sed -i 's/#PermitRootLogin prohibit-password/PermitRootLogin yes/' /etc/ssh/sshd_config && \
@@ -64,6 +65,8 @@ RUN git clone https://github.com/realsenseai/realsense-ros.git -b ros2-developme
     git clone https://github.com/ros-controls/ros2_control.git -b humble && \
     git clone https://github.com/ros-controls/ros2_controllers.git -b humble && \
     git clone https://github.com/ROBOTIS-GIT/DynamixelSDK.git -b humble && \
+    git clone https://github.com/cra-ros-pkg/robot_localization.git -b humble-devel && \
+    git clone https://github.com/ros-geographic-info/geographic_info.git -b ros2 && \
     git clone https://github.com/facontidavide/rosx_introspection.git -b 2.0.0 && \
     git clone https://github.com/foxglove/foxglove-sdk.git -b sdk/v0.17.1 && \
     git clone https://github.com/ros/resource_retriever.git -b humble && \
