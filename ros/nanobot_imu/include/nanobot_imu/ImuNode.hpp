@@ -21,6 +21,9 @@ namespace nanobot_imu
     void read_data();
     void publish_data();
 
+    bool _use_mag;
+    bool _debug;
+
     rclcpp::Publisher<sensor_msgs::msg::Imu>::SharedPtr _imu_publisher;
     rclcpp::Publisher<sensor_msgs::msg::MagneticField>::SharedPtr _mag_publisher;
     rclcpp::TimerBase::SharedPtr _publish_timer;

@@ -127,9 +127,17 @@ namespace nanobot_imu
     return true;
   }
 
-  bool BNO085::start_dynamic_calibration()
+  bool BNO085::start_dynamic_calibration(bool use_mag)
   {
-    int status = sh2_setCalConfig(SH2_CAL_ACCEL | SH2_CAL_GYRO | SH2_CAL_MAG);
+    // Default to Accel and Gyro only
+    uint8_t cal_config = SH2_CAL_ACCEL | SH2_CAL_GYRO;
+    
+    // Add Magnetometer only if use_mag is true
+    if (use_mag) {
+      cal_config |= SH2_CAL_MAG;
+    }
+
+    int status = sh2_setCalConfig(cal_config);
     if (status != SH2_OK)
     {
       std::cerr << "Error setting calibration config" << std::endl;
@@ -171,9 +179,11 @@ namespace nanobot_imu
     return true;
   }
 
-  bool BNO085::tare()
+  bool BNO085::tare(bool use_mag)
   {
-    int status = sh2_setTareNow(SH2_TARE_X | SH2_TARE_Y | SH2_TARE_Z, SH2_TARE_BASIS_GEOMAGNETIC_ROTATION_VECTOR);
+    sh2_TareBasis_t tare_basis = use_mag ? SH2_TARE_BASIS_GEOMAGNETIC_ROTATION_VECTOR : SH2_TARE_BASIS_GAMING_ROTATION_VECTOR;
+
+    int status = sh2_setTareNow(SH2_TARE_X | SH2_TARE_Y | SH2_TARE_Z, tare_basis);
     if (status != SH2_OK)
     {
       std::cerr << "Error when taring" << std::endl;

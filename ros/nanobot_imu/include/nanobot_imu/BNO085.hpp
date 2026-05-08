@@ -24,8 +24,8 @@ namespace nanobot_imu
     void finish_i2c();
     void spin_once();
     bool enable_report(sh2_SensorId_t sensorId, uint32_t interval_us, ReportCallback callback);
-    bool start_dynamic_calibration();
-    bool tare();
+    bool start_dynamic_calibration(bool use_mag);
+    bool tare(bool use_mag);
 
     sh2_ProductIds_t prod_ids;
     ReportCallbacksMap report_callbacks;
