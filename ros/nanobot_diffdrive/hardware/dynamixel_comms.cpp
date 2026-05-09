@@ -34,13 +34,8 @@ void DynamixelComms::disconnect()
   portHandler_->closePort();
 }
 
-std::string DynamixelComms::setupMotors(
-    int left_motor_id, int right_motor_id, int velocity_limit)
+std::string DynamixelComms::setupMotors(int velocity_limit)
 {
-  left_motor_id_ = left_motor_id;
-  right_motor_id_ = right_motor_id;
-  velocity_limit_ = velocity_limit;
-
   // Use Velocity Control Mode
   dxl_comm_result_ = packetHandler_->write1ByteTxRx(
       portHandler_.get(),
@@ -58,7 +53,7 @@ std::string DynamixelComms::setupMotors(
       portHandler_.get(),
       BROADCAST_ID,
       ADDR_VELOCITY_LIMIT,
-      velocity_limit_,
+      velocity_limit,
       &dxl_error_);
   if (dxl_comm_result_ != COMM_SUCCESS)
   {
@@ -107,74 +102,64 @@ std::string DynamixelComms::shutdownMotors()
   return "";
 }
 
-std::string DynamixelComms::write(int left_motor_value, int right_motor_value)
+std::string DynamixelComms::write(const std::vector<MotorState>& motors)
 {
   uint8_t dxl_error_ = 0;
 
-  dxl_comm_result_ = packetHandler_->write4ByteTxRx(
-      portHandler_.get(),
-      left_motor_id_,
-      ADDR_GOAL_VELOCITY,
-      left_motor_value,
-      &dxl_error_);
-
-  dxl_comm_result_ = packetHandler_->write4ByteTxRx(
-      portHandler_.get(),
-      right_motor_id_,
-      ADDR_GOAL_VELOCITY,
-      right_motor_value,
-      &dxl_error_);
-
-  if (dxl_comm_result_ != COMM_SUCCESS)
+  for (const auto& motor : motors)
   {
-    return packetHandler_->getTxRxResult(dxl_comm_result_);
+    dxl_comm_result_ = packetHandler_->write4ByteTxRx(
+        portHandler_.get(),
+        motor.id,
+        ADDR_GOAL_VELOCITY,
+        motor.velocity,
+        &dxl_error_);
+
+    if (dxl_comm_result_ != COMM_SUCCESS)
+    {
+      return packetHandler_->getTxRxResult(dxl_comm_result_);
+    }
+    else if (dxl_error_ != 0)
+    {
+      return packetHandler_->getRxPacketError(dxl_error_);
+    }
   }
-  else if (dxl_error_ != 0)
-  {
-    return packetHandler_->getRxPacketError(dxl_error_);
-  }
+
   return "";
 }
 
-std::string DynamixelComms::read(int &left_vel_value, int &left_pos_value, int &right_vel_value, int &right_pos_value)
+std::string DynamixelComms::read(std::vector<MotorState>& motors)
 {
   uint8_t dxl_error_ = 0;
 
-  dxl_comm_result_ = packetHandler_->read4ByteTxRx(
-      portHandler_.get(),
-      left_motor_id_,
-      ADDR_PRESENT_VELOCITY,
-      reinterpret_cast<uint32_t *>(&left_vel_value),
-      &dxl_error_);
-
-  dxl_comm_result_ = packetHandler_->read4ByteTxRx(
-      portHandler_.get(),
-      left_motor_id_,
-      ADDR_PRESENT_POSITION,
-      reinterpret_cast<uint32_t *>(&left_pos_value),
-      &dxl_error_);
-
-  dxl_comm_result_ = packetHandler_->read4ByteTxRx(
-      portHandler_.get(),
-      right_motor_id_,
-      ADDR_PRESENT_VELOCITY,
-      reinterpret_cast<uint32_t *>(&right_vel_value),
-      &dxl_error_);
-
-  dxl_comm_result_ = packetHandler_->read4ByteTxRx(
-      portHandler_.get(),
-      right_motor_id_,
-      ADDR_PRESENT_POSITION,
-      reinterpret_cast<uint32_t *>(&right_pos_value),
-      &dxl_error_);
-
-  if (dxl_comm_result_ != COMM_SUCCESS)
+  for (auto& motor : motors)
   {
-    return packetHandler_->getTxRxResult(dxl_comm_result_);
+    uint32_t current_vel = 0;
+    uint32_t current_pos = 0;
+
+    dxl_comm_result_ = packetHandler_->read4ByteTxRx(
+        portHandler_.get(),
+        motor.id,
+        ADDR_PRESENT_VELOCITY,
+        &current_vel,
+        &dxl_error_);
+
+    if (dxl_comm_result_ != COMM_SUCCESS) return packetHandler_->getTxRxResult(dxl_comm_result_);
+    if (dxl_error_ != 0) return packetHandler_->getRxPacketError(dxl_error_);
+
+    dxl_comm_result_ = packetHandler_->read4ByteTxRx(
+        portHandler_.get(),
+        motor.id,
+        ADDR_PRESENT_POSITION,
+        &current_pos,
+        &dxl_error_);
+
+    if (dxl_comm_result_ != COMM_SUCCESS) return packetHandler_->getTxRxResult(dxl_comm_result_);
+    if (dxl_error_ != 0) return packetHandler_->getRxPacketError(dxl_error_);
+
+    motor.velocity = static_cast<int>(current_vel);
+    motor.position = static_cast<int>(current_pos);
   }
-  else if (dxl_error_ != 0)
-  {
-    return packetHandler_->getRxPacketError(dxl_error_);
-  }
+
   return "";
 }

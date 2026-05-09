@@ -100,11 +100,17 @@
     <material>Gazebo/Yellow</material>
   </gazebo>
 
-  <!-- Left wheel -->
+  <!-- Front left wheel -->
+  <!-- TODO: Enable front wheels -->
 
-  <joint name="left_wheel_joint" type="continuous">
+  <!-- Front right wheel -->
+  <!-- TODO: Enable front wheels -->
+
+  <!-- Rear left wheel -->
+
+  <joint name="rear_left_wheel_joint" type="continuous">
     <parent link="base_link" />
-    <child link="left_wheel_link" />
+    <child link="rear_left_wheel_link" />
     <origin
       xyz="0 ${body_y_dim/2 + wheel_length/2 + wheel_separation_from_body} 0"
       rpy="-${pi/2} 0 0" />
@@ -113,7 +119,7 @@
     <!-- <dynamics damping="1.0" friction="1.0" /> -->
   </joint>
 
-  <link name="left_wheel_link">
+  <link name="rear_left_wheel_link">
     <visual>
       <geometry>
         <cylinder length="${wheel_length}" radius="${wheel_radius}" />
@@ -128,17 +134,17 @@
     <xacro:inertia_wheel />
   </link>
 
-  <gazebo reference="left_wheel_link">
+  <gazebo reference="rear_left_wheel_link">
     <material>Gazebo/Black</material>
     <!-- <mu1 value="0.2" />
     <mu2 value="0.2" /> -->
   </gazebo>
 
-  <!-- Right wheel -->
+  <!-- Rear right wheel -->
 
-  <joint name="right_wheel_joint" type="continuous">
+  <joint name="rear_right_wheel_joint" type="continuous">
     <parent link="base_link" />
-    <child link="right_wheel_link" />
+    <child link="rear_right_wheel_link" />
     <origin
       xyz="0 -${body_y_dim/2 + wheel_length/2 + wheel_separation_from_body} 0"
       rpy="${pi/2} 0 0" />
@@ -147,7 +153,7 @@
     <!-- <dynamics damping="1.0" friction="1.0" /> -->
   </joint>
 
-  <link name="right_wheel_link">
+  <link name="rear_right_wheel_link">
     <visual>
       <geometry>
         <cylinder length="${wheel_length}" radius="${wheel_radius}" />
@@ -162,14 +168,15 @@
     <xacro:inertia_wheel />
   </link>
 
-  <gazebo reference="right_wheel_link">
+  <gazebo reference="rear_right_wheel_link">
     <material>Gazebo/Black</material>
     <!-- <mu1 value="0.2" />
     <mu2 value="0.2" /> -->
   </gazebo>
 
   <!-- Caster wheel -->
-
+  <!-- TODO: Enable front wheels -->
+  
   <joint name="caster_wheel_joint" type="fixed">
       <parent link="body_link"/>
       <child link="caster_wheel_link"/>

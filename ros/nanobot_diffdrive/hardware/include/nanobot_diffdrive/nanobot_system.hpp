@@ -25,16 +25,18 @@ namespace nanobot_diffdrive
   {
     struct Config
     {
-      std::string left_wheel_name = "";
-      std::string right_wheel_name = "";
-      int left_motor_id = 0;
-      int right_motor_id = 0;
       int velocity_limit = 0;
       float rpm_per_unit = 0.0;
       float deg_per_pulse = 0.0;
       std::string device = "";
       float protocol_version = 0.0;
       int baud_rate = 0;
+    };
+
+    struct ConfiguredWheel {
+      Wheel wheel;
+      int motor_id;
+      double sign;
     };
 
   public:
@@ -68,8 +70,7 @@ namespace nanobot_diffdrive
   private:
     DynamixelComms comms_;
     Config cfg_;
-    Wheel left_wheel_;
-    Wheel right_wheel_;
+    std::vector<ConfiguredWheel> wheels_;
   };
 
 } // namespace nanobot_diffdrive

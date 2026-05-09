@@ -6,6 +6,12 @@
 #include <string>
 #include <memory>
 
+struct MotorState {
+  int id;
+  int velocity; 
+  int position; 
+};
+
 class DynamixelComms
 {
 public:
@@ -14,11 +20,11 @@ public:
   std::string connect(std::string device, float protocol_version, int baud_rate);
   void disconnect();
 
-  std::string setupMotors(int left_motor_id, int right_motor_id, int velocity_limit);
+  std::string setupMotors(int velocity_limit);
   std::string shutdownMotors();
 
-  std::string write(int left_motor_value, int right_motor_value);
-  std::string read(int &left_vel_value, int &left_pos_value, int &right_vel_value, int &right_pos_value);
+  std::string read(std::vector<MotorState>& motors);
+  std::string write(const std::vector<MotorState>& motors);
 
 private:
   static const int ADDR_OPERATING_MODE = 11;
@@ -32,9 +38,6 @@ private:
   std::unique_ptr<dynamixel::PacketHandler> packetHandler_;
   int dxl_comm_result_;
   uint8_t dxl_error_;
-  int left_motor_id_;
-  int right_motor_id_;
-  int velocity_limit_;
 };
 
 #endif // NANOBOT_DIFFDRIVE__DYNAMIXEL_COMMS_HPP_

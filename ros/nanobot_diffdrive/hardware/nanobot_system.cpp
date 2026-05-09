@@ -6,6 +6,7 @@
 #include <limits>
 #include <memory>
 #include <vector>
+#include <sstream>
 
 #include "hardware_interface/lexical_casts.hpp"
 #include "hardware_interface/types/hardware_interface_type_values.hpp"
@@ -13,6 +14,17 @@
 
 namespace nanobot_diffdrive
 {
+  // Helper function to parse comma-separated parameters
+  std::vector<std::string> split_string(const std::string &s, char delimiter) {
+    std::vector<std::string> tokens;
+    std::string token;
+    std::istringstream tokenStream(s);
+    while (std::getline(tokenStream, token, delimiter)) {
+      tokens.push_back(token);
+    }
+    return tokens;
+  }
+
   hardware_interface::CallbackReturn NanobotDiffDriveHardware::on_init(
       const hardware_interface::HardwareInfo &info)
   {
@@ -23,23 +35,43 @@ namespace nanobot_diffdrive
       return hardware_interface::CallbackReturn::ERROR;
     }
 
-    cfg_.left_wheel_name = info_.hardware_parameters["left_wheel_name"];
-    cfg_.right_wheel_name = info_.hardware_parameters["right_wheel_name"];
-    cfg_.left_motor_id = std::stoi(info_.hardware_parameters["left_motor_id"]);
-    cfg_.right_motor_id = std::stoi(info_.hardware_parameters["right_motor_id"]);
     cfg_.velocity_limit = std::stoi(info_.hardware_parameters["velocity_limit"]);
     cfg_.rpm_per_unit = std::stof(info_.hardware_parameters["rpm_per_unit"]);
     cfg_.deg_per_pulse = std::stof(info_.hardware_parameters["deg_per_pulse"]);
+
     cfg_.device = info_.hardware_parameters["device"];
     cfg_.protocol_version = std::stof(info_.hardware_parameters["protocol_version"]);
     cfg_.baud_rate = std::stoi(info_.hardware_parameters["baud_rate"]);
 
-    left_wheel_.setup(cfg_.left_wheel_name, cfg_.rpm_per_unit, cfg_.deg_per_pulse);
-    right_wheel_.setup(cfg_.right_wheel_name, cfg_.rpm_per_unit, cfg_.deg_per_pulse);
+    auto left_names = split_string(info_.hardware_parameters["left_wheel_names"], ',');
+    auto right_names = split_string(info_.hardware_parameters["right_wheel_names"], ',');
+    auto left_ids = split_string(info_.hardware_parameters["left_motor_ids"], ',');
+    auto right_ids = split_string(info_.hardware_parameters["right_motor_ids"], ',');
+    auto left_signs = split_string(info_.hardware_parameters["left_wheel_signs"], ',');
+    auto right_signs = split_string(info_.hardware_parameters["right_wheel_signs"], ',');
 
+    // Populate Left Wheels
+    for (size_t i = 0; i < left_names.size(); i++) {
+      ConfiguredWheel cw;
+      cw.wheel.setup(left_names[i], cfg_.rpm_per_unit, cfg_.deg_per_pulse);
+      cw.motor_id = std::stoi(left_ids[i]);
+      cw.sign = std::stod(left_signs[i]);
+      wheels_.push_back(cw);
+    }
+
+    // Populate Right Wheels
+    for (size_t i = 0; i < right_names.size(); i++) {
+      ConfiguredWheel cw;
+      cw.wheel.setup(right_names[i], cfg_.rpm_per_unit, cfg_.deg_per_pulse);
+      cw.motor_id = std::stoi(right_ids[i]);
+      cw.sign = std::stod(right_signs[i]);
+      wheels_.push_back(cw);
+    }
+
+    // Verify joints match URDF definitions
     for (const hardware_interface::ComponentInfo &joint : info_.joints)
     {
-      // DiffBotSystem has exactly two states and one command interface on each joint
+      // Check Command Interfaces
       if (joint.command_interfaces.size() != 1)
       {
         RCLCPP_FATAL(
@@ -53,11 +85,12 @@ namespace nanobot_diffdrive
       {
         RCLCPP_FATAL(
             rclcpp::get_logger("NanobotDiffDriveHardware"),
-            "Joint '%s' have %s command interfaces found. '%s' expected.", joint.name.c_str(),
+            "Joint '%s' has %s command interfaces found. '%s' expected.", joint.name.c_str(),
             joint.command_interfaces[0].name.c_str(), hardware_interface::HW_IF_VELOCITY);
         return hardware_interface::CallbackReturn::ERROR;
       }
 
+      // Check State Interfaces
       if (joint.state_interfaces.size() != 2)
       {
         RCLCPP_FATAL(
@@ -67,21 +100,20 @@ namespace nanobot_diffdrive
         return hardware_interface::CallbackReturn::ERROR;
       }
 
-      if (joint.state_interfaces[0].name != hardware_interface::HW_IF_POSITION)
-      {
-        RCLCPP_FATAL(
-            rclcpp::get_logger("NanobotDiffDriveHardware"),
-            "Joint '%s' have '%s' as first state interface. '%s' expected.", joint.name.c_str(),
-            joint.state_interfaces[0].name.c_str(), hardware_interface::HW_IF_POSITION);
-        return hardware_interface::CallbackReturn::ERROR;
+      bool has_position = false;
+      bool has_velocity = false;
+
+      for (const auto& state_if : joint.state_interfaces) {
+        if (state_if.name == hardware_interface::HW_IF_POSITION) has_position = true;
+        if (state_if.name == hardware_interface::HW_IF_VELOCITY) has_velocity = true;
       }
 
-      if (joint.state_interfaces[1].name != hardware_interface::HW_IF_VELOCITY)
+      if (!has_position || !has_velocity)
       {
         RCLCPP_FATAL(
             rclcpp::get_logger("NanobotDiffDriveHardware"),
-            "Joint '%s' have '%s' as second state interface. '%s' expected.", joint.name.c_str(),
-            joint.state_interfaces[1].name.c_str(), hardware_interface::HW_IF_VELOCITY);
+            "Joint '%s' is missing either 'position' or 'velocity' state interface.", 
+            joint.name.c_str());
         return hardware_interface::CallbackReturn::ERROR;
       }
     }
@@ -93,15 +125,12 @@ namespace nanobot_diffdrive
   {
     std::vector<hardware_interface::StateInterface> state_interfaces;
 
-    state_interfaces.emplace_back(hardware_interface::StateInterface(
-        left_wheel_.name, hardware_interface::HW_IF_POSITION, &left_wheel_.pos));
-    state_interfaces.emplace_back(hardware_interface::StateInterface(
-        left_wheel_.name, hardware_interface::HW_IF_VELOCITY, &left_wheel_.vel));
-
-    state_interfaces.emplace_back(hardware_interface::StateInterface(
-        right_wheel_.name, hardware_interface::HW_IF_POSITION, &right_wheel_.pos));
-    state_interfaces.emplace_back(hardware_interface::StateInterface(
-        right_wheel_.name, hardware_interface::HW_IF_VELOCITY, &right_wheel_.vel));
+    for (auto &cw : wheels_) {
+      state_interfaces.emplace_back(hardware_interface::StateInterface(
+          cw.wheel.name, hardware_interface::HW_IF_POSITION, &cw.wheel.pos));
+      state_interfaces.emplace_back(hardware_interface::StateInterface(
+          cw.wheel.name, hardware_interface::HW_IF_VELOCITY, &cw.wheel.vel));
+    }
 
     return state_interfaces;
   }
@@ -110,11 +139,10 @@ namespace nanobot_diffdrive
   {
     std::vector<hardware_interface::CommandInterface> command_interfaces;
 
-    command_interfaces.emplace_back(hardware_interface::CommandInterface(
-        left_wheel_.name, hardware_interface::HW_IF_VELOCITY, &left_wheel_.cmd));
-
-    command_interfaces.emplace_back(hardware_interface::CommandInterface(
-        right_wheel_.name, hardware_interface::HW_IF_VELOCITY, &right_wheel_.cmd));
+    for (auto &cw : wheels_) {
+      command_interfaces.emplace_back(hardware_interface::CommandInterface(
+          cw.wheel.name, hardware_interface::HW_IF_VELOCITY, &cw.wheel.cmd));
+    }
 
     return command_interfaces;
   }
@@ -152,7 +180,7 @@ namespace nanobot_diffdrive
   {
     RCLCPP_INFO(rclcpp::get_logger("NanobotDiffDriveHardware"), "Activating ...please wait...");
 
-    std::string error = comms_.setupMotors(cfg_.left_motor_id, cfg_.right_motor_id, cfg_.velocity_limit);
+    std::string error = comms_.setupMotors(cfg_.velocity_limit);
 
     if (!error.empty())
     {
@@ -182,47 +210,42 @@ namespace nanobot_diffdrive
   hardware_interface::return_type NanobotDiffDriveHardware::read(
       const rclcpp::Time & /*time*/, const rclcpp::Duration & /*period*/)
   {
-    int left_vel_value;
-    int left_pos_value;
-    int right_vel_value;
-    int right_pos_value;
+    std::vector<MotorState> motor_states;
+    motor_states.reserve(wheels_.size()); 
+    for (const auto &cw : wheels_) { 
+      motor_states.push_back({cw.motor_id, 0, 0}); // Initialize with ID, zero vel, zero pos
+    }
 
-    comms_.read(left_vel_value, left_pos_value, right_vel_value, right_pos_value);
+    std::string error = comms_.read(motor_states);
+    
+    if (!error.empty()) {
+        RCLCPP_ERROR(rclcpp::get_logger("NanobotDiffDriveHardware"), "Read error: %s", error.c_str());
+    }
 
-    left_wheel_.vel = left_vel_value * left_wheel_.rad_per_unit;
-    left_wheel_.pos = left_pos_value * left_wheel_.rad_per_pulse;
-
-    right_wheel_.vel = -right_vel_value * right_wheel_.rad_per_unit;
-    right_wheel_.pos = -right_pos_value * right_wheel_.rad_per_pulse;
-
-    // RCLCPP_INFO(
-    //     rclcpp::get_logger("NanobotDiffDriveHardware"),
-    //     "read vel: %f %f",
-    //     left_wheel_.vel,
-    //     right_wheel_.vel);
-
-    // RCLCPP_INFO(
-    //     rclcpp::get_logger("NanobotDiffDriveHardware"),
-    //     "read pos: %f %f",
-    //     left_wheel_.pos,
-    //     right_wheel_.pos);
+    for (size_t i = 0; i < wheels_.size(); i++) {
+      wheels_[i].wheel.vel = (motor_states[i].velocity * wheels_[i].sign) * wheels_[i].wheel.rad_per_unit;
+      wheels_[i].wheel.pos = (motor_states[i].position * wheels_[i].sign) * wheels_[i].wheel.rad_per_pulse;
+    }
 
     return hardware_interface::return_type::OK;
   }
 
-  hardware_interface::return_type nanobot_diffdrive::NanobotDiffDriveHardware::write(
+  hardware_interface::return_type NanobotDiffDriveHardware::write(
       const rclcpp::Time & /*time*/, const rclcpp::Duration & /*period*/)
   {
-    int left_motor_value = left_wheel_.cmd / left_wheel_.rad_per_unit;
-    int right_motor_value = -right_wheel_.cmd / right_wheel_.rad_per_unit;
+    std::vector<MotorState> motor_states;
+    motor_states.reserve(wheels_.size());
 
-    comms_.write(left_motor_value, right_motor_value);
+    for (const auto &cw : wheels_) {
+      int motor_cmd = (cw.wheel.cmd * cw.sign) / cw.wheel.rad_per_unit;
+      motor_states.push_back({cw.motor_id, motor_cmd, 0}); // ID, Command Velocity, Position (ignored for write)
+    }
 
-    // RCLCPP_INFO(
-    //     rclcpp::get_logger("NanobotDiffDriveHardware"),
-    //     "write vel: %f %f",
-    //     left_wheel_.cmd,
-    //     right_wheel_.cmd);
+    std::string error = comms_.write(motor_states);
+
+    if (!error.empty()) {
+        RCLCPP_ERROR(rclcpp::get_logger("NanobotDiffDriveHardware"), "Write error: %s", error.c_str());
+    }
 
     return hardware_interface::return_type::OK;
   }
