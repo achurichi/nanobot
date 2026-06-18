@@ -5,13 +5,12 @@ services:
     runtime: nvidia
     network_mode: "host"
     restart: unless-stopped
-    devices:
-      - "/dev/serial/by-id/usb-FTDI_FT232R_USB_UART_ABSCDOT3-if00-port0:/dev/serial/by-id/usb-FTDI_FT232R_USB_UART_ABSCDOT3-if00-port0" # Dynamixel Controller
     device_cgroup_rules:
       - 'c 81:* rmw' # Video
       - 'c 189:* rmw' # USB
       - 'c 13:* rmw' # Input
       - 'c 89:* rmw' # I2C
+      - 'c 188:* rmw' # USB Serial
     volumes:
       - /dev:/dev:rshared
       - /run/udev:/run/udev:ro

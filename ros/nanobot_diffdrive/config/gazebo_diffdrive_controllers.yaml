@@ -14,15 +14,11 @@ diff_controller:
     publish_rate: 30.0 # You can set this higher than the controller manager update rate, but it will be throttled
     base_frame_id: base_link
 
-    # TODO: Enable front wheels
-    left_wheel_names: ['rear_left_wheel_joint']
-    right_wheel_names: ['rear_right_wheel_joint']
-    # left_wheel_names: ['front_left_wheel_joint', 'rear_left_wheel_joint']
-    # right_wheel_names: ['front_right_wheel_joint', 'rear_right_wheel_joint']
+    left_wheel_names: ['front_left_wheel_joint', 'rear_left_wheel_joint']
+    right_wheel_names: ['front_right_wheel_joint', 'rear_right_wheel_joint']
 
     wheel_separation: 0.1125
     wheel_radius: 0.033
-    wheels_per_side: 1
-    # wheels_per_side: 2
+    wheels_per_side: 2
 
     use_stamped_vel: false

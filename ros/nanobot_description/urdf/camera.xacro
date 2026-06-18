@@ -6,8 +6,8 @@
   <xacro:property name="camera_x_dim" value="0.025" />
   <xacro:property name="camera_y_dim" value="0.09" />
   <xacro:property name="camera_z_dim" value="0.025" />
-  <xacro:property name="camera_x_offset" value="0.009" />
-  <xacro:property name="camera_height" value="0.085" />
+  <xacro:property name="camera_x_offset" value="0.001" />
+  <xacro:property name="camera_height" value="0.0875" />
   <xacro:property name="sensor_offset" value="0.0175" />
 
   <!-- Links and joints definition -->
@@ -15,7 +15,7 @@
   <joint name="camera_joint" type="fixed">
     <parent link="body_link" />
     <child link="camera_link" />
-    <origin xyz="${body_x_dim + camera_x_offset} ${sensor_offset} ${camera_height}" rpy="0 0 0" />
+    <origin xyz="${body_x_dim/2 + camera_x_offset} ${sensor_offset} ${camera_height}" rpy="0 0 0" />
   </joint>
 
   <link name="camera_link">
