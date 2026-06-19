@@ -65,6 +65,7 @@ RUN git clone https://github.com/realsenseai/realsense-ros.git -b ros2-developme
     git clone https://github.com/ros-controls/ros2_control.git -b humble && \
     git clone https://github.com/ros-controls/ros2_controllers.git -b humble && \
     git clone https://github.com/ROBOTIS-GIT/DynamixelSDK.git -b humble && \
+    git clone https://github.com/Slamtec/rplidar_ros.git -b ros2 && \
     git clone https://github.com/cra-ros-pkg/robot_localization.git -b humble-devel && \
     git clone https://github.com/ros-geographic-info/geographic_info.git -b ros2 && \
     git clone https://github.com/facontidavide/rosx_introspection.git -b 2.0.0 && \

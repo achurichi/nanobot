@@ -17,7 +17,7 @@
   <xacro:property name="wheel_y_offset" value="0.00825" />
 
   <!-- Robot body and wheel mass -->
-  <xacro:property name="body_mass" value="1.256" />
+  <xacro:property name="body_mass" value="1.146" />
   <xacro:property name="wheel_mass" value="0.028" />
 
   <!-- Moments of intertia of the wheel -->

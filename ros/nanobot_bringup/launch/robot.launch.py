@@ -19,7 +19,7 @@ import xacro
 PACKAGE_NAME = "nanobot_bringup"
 CONTROLER_PACKAGE_NAME = "nanobot_diffdrive"
 DESCRIPTION_PACKAGE_NAME = "nanobot_description"
-# LIDAR_PACKAGE_NAME = "nanobot_lidar"
+LIDAR_PACKAGE_NAME = "nanobot_lidar"
 CAMERA_PACKAGE_NAME = "nanobot_camera"
 IMU_PACKAGE_NAME = "nanobot_imu"
 NAVIGATION_PACKAGE_NAME = "nanobot_navigation"
@@ -99,12 +99,12 @@ def generate_launch_description():
     )
 
     # Lidar
-    # lidar_launch_path = os.path.join(
-    #     get_package_share_directory(LIDAR_PACKAGE_NAME), "launch", "lidar.launch.py"
-    # )
-    # lidar = IncludeLaunchDescription(
-    #     PythonLaunchDescriptionSource([lidar_launch_path]),
-    # )
+    lidar_launch_path = os.path.join(
+        get_package_share_directory(LIDAR_PACKAGE_NAME), "launch", "lidar.launch.py"
+    )
+    lidar = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource([lidar_launch_path]),
+    )
 
     # Camera
     camera_launch_path = os.path.join(
@@ -157,10 +157,10 @@ def generate_launch_description():
             robot_state_pub_node,
             robot_controller_spawner,
             delay_joint_state_broadcaster_after_robot_controller_spawner,
-            # lidar,
+            lidar,
             camera,
             imu,
-            navigation,
+            # navigation,
             twist_mux,
         ]
     )
